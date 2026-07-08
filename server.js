@@ -4,22 +4,31 @@ import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.routes.js";
 
+
+// .env file configration
 dotenv.config({path:"./.env"});
 
 const app = express();
 
 app.use(express.json());
 
+// user routes
 app.use("/User", userRoutes);
 
+
+// routes
 app.get("/",(req ,res ,next)=>{
     res.send("hello from server");
 });
 
+
+//middleware routes
 app.use((req,res,next)=>{
     return next(new HttpError("route not found",404));
 });
 
+
+// centrelized error routes
 app.use((error,req,res,next)=>{
     if(res.headersSent){
         return next(error);
@@ -29,12 +38,14 @@ app.use((error,req,res,next)=>{
     });
 });
 
+
+// connect db and create function 
 const StartServer = async ()=>{
     try{
 
         await connectDB();
 
-        const port = process.env.PORT || 5000;
+        const port = process.env.PORT || 5000; // define port 
 
         app.listen(port,(error)=>{
             if(error){
@@ -42,7 +53,7 @@ const StartServer = async ()=>{
             }
             console.log(`server has runing on port ${port}`);
         });
-    }catch(error){
+    }catch(error){ 
        console.log(error.message);
         process.exit(1);
     }

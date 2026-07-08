@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import HttpError from "../middleware/HttpError.js";
 import bcrypt from "bcryptjs";
 
+
+// create user schema and This structure
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -16,7 +18,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        validate: ((value) => {
+        validate: ((value) => {  // check password
             if (value.toLowerCase() === "password") {
                 return next(new HttpError("password can not use password key word", 401));
             }
@@ -41,7 +43,7 @@ const userSchema = new mongoose.Schema({
 },
 );
 
-
+// user password bcrypt.hash ---- like #####
 userSchema.pre("save" , async function(){
 
     const user = this;
@@ -53,4 +55,6 @@ userSchema.pre("save" , async function(){
 
 const User = mongoose.model("User" , userSchema);
 
+
+// export user schema  
 export default User;
