@@ -10,6 +10,7 @@ const registerSchema = Joi.object({
     }),
     email:Joi.string().email().required().messages({
         "string.base":"email must be is in string",
+        "string.email": "Please enter a valid email",
         "string.empty":"email is required",
         "any.required":"email is required"
     }),
@@ -20,7 +21,7 @@ const registerSchema = Joi.object({
         "any.required":"password muct be required"
     }),
     phone:Joi.string().min(10).pattern(/^[0-9]{10}$/).required().messages({
-        "string.pattern.bace":"phone must be exactly 10 digits",
+        "string.pattern.base":"phone must be exactly 10 digits",
         "any.required":"phone must be required"
     }),
     address:Joi.string().required().min(5).max(100).messages({
