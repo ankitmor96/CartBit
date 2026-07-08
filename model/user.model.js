@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
             }
         }),
     },
+    phone:{
+       type:String,
+       required:true
+    },
     address: {
         type: String,
         required: true
@@ -53,8 +57,26 @@ userSchema.pre("save" , async function(){
     }
 });
 
-const User = mongoose.model("User" , userSchema);
+userSchema.statics.findByCredentials = async function(email,password){
 
+    const user = await this.findOne({email});
+
+    if(!user){
+        throw new Error("unable to login");
+    }
+
+    const isModified = await bcrypt.compare(password, user.password);
+
+    if(!isModified){
+       throw new Error("unable to login");
+    }
+
+    return user;
+
+};
+
+
+const User = mongoose.model("User" , userSchema);
 
 // export user schema  
 export default User;

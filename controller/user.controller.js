@@ -5,12 +5,13 @@ import User from "../model/user.model.js";
 // create new suer
 const add = async(req ,res ,next)=>{
     try{
-        const {name,email,password,address,role,isverified} = req.body; // called by req.body
+        const {name,email,password,phone,address,role} = req.body; // called by req.body
 
         const newUser = new User({  //create user 
             name,
             email,
             password,
+            phone,
             address
         });
 
@@ -32,6 +33,28 @@ const add = async(req ,res ,next)=>{
     }
 };
 
+const login = async(req,res,next)=>{
+    try{
+
+        const {email,password} = req.body;
+
+        const userLogin = await User.findByCredentials(email , password);
+
+        if(!userLogin){
+            return next(new HttpError("please check details",400));
+        }
+
+         res.status(200).json({
+            success:true,
+            message:"new user create successFully",
+            data:userLogin
+        });
+
+    }catch(error){
+      return next(new HttpError(error.message,500));
+    }
+};
+
 
 // export controller
-export default {add};
+export default {add,login};
