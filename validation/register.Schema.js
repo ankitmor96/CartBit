@@ -3,7 +3,7 @@ import Joi from "joi";
 const registerSchema = Joi.object({
 
     name:Joi.string().min(2).max(50).required().trim().messages({
-        "string.bace":"name is must be in string",
+        "string.base":"name is must be in string",
         "string.min":"name must be 2 characters long",
         "string.max":"name must be 50 characters long",
         "any.required":"name is required"
@@ -24,7 +24,7 @@ const registerSchema = Joi.object({
         "any.required":"phone must be required"
     }),
     address:Joi.string().required().min(5).max(100).messages({
-        "string.bace":"address must be in string",
+        "string.base":"address must be in string",
         "string.min":"address must be 5 character long",
         "string.max":"address must be 100 character long",
         "any.required":"address must be required"
