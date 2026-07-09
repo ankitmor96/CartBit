@@ -24,7 +24,7 @@ const registerSchema = Joi.object({
         "string.pattern.base":"phone must be exactly 10 digits",
         "any.required":"phone must be required"
     }),
-    address:Joi.string().required().min(5).max(100).messages({
+    address:Joi.string().required().min(3).max(100).messages({
         "string.base":"address must be in string",
         "string.min":"address must be 5 character long",
         "string.max":"address must be 100 character long",

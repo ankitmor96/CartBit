@@ -11,7 +11,7 @@ const validate = (schema) => (req,res,next)=>{
           });
 
           if(error){
-            return next(new HttpError(error.details[0].message,400));
+           throw new Error(error.details[0].message,400);
           }
 
           next();
