@@ -59,16 +59,17 @@ const login = async (req, res, next) => {
 
         const userLogin = await User.findByCredentials(email, password);
 
-        const token = await userLogin.generateAuthToken();
 
         if (!userLogin) {
             return next(new HttpError("please check details", 400));
         }
 
+        const token = await userLogin.generateAuthToken();
+
         res.status(200).json({
             success: true,
             message: "new user create successFully",
-            data: userLogin  // display login user
+            data: userLogin , // display login user
         });
 
     } catch (error) {
@@ -85,6 +86,8 @@ const authLogin = async (req, res, next) => {
             return next(new HttpError("auth user is not found", 404));
         }
 
+        const token = await user.generateAuthToken();
+
         res.status(200).json({
             success: true,
             message: "new user create successFully",
@@ -96,57 +99,90 @@ const authLogin = async (req, res, next) => {
     }
 };
 
-const update = async (req,res,next)=>{
-    try{
+const update = async (req, res, next) => {
+    try {
 
         const user = req.user;
 
         const updates = Object.keys(req.body);
 
-        const allowedFields = ["name","password","phone","address"];
+        const allowedFields = ["name", "password", "phone", "address"];
 
-        const isValidUpdates = updates.every((field)=>
+        const isValidUpdates = updates.every((field) =>
             allowedFields.includes(field));
 
-        if(!isValidUpdates){
-            return next(new HttpError("updates not found",400));
+        if (!isValidUpdates) {
+            return next(new HttpError("updates not found", 400));
         }
 
-        updates.forEach((update)=>{
+        updates.forEach((update) => {
             user[update] = req.body[update];
         });
 
         await user.save();
 
-         res.status(200).json({
+        res.status(200).json({
             success: true,
             message: "user update successFully",
             user // display auth login user
         });
 
-    }catch(error){
-        return next(new HttpError(error.message,500));
+    } catch (error) {
+        return next(new HttpError(error.message, 500));
     }
 };
 
 // auth logOut user
 const logOut = async (req, res, next) => {
     try {
+        req.user.tokens = req.user.tokens.filter((t) => t.token !== req.token);
+
+        await req.user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "logout successFully",
+
+        });
+    } catch (error) {
+        return next(HttpError(error.message, 500));
+    }
+};
+
+const logOutAll = async (req, res, next) => {
+    try {
+
+        req.user.tokens = [];
+
+        req.user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "logoutAll successFully",
+
+        });
+    }catch(error){
+        return next(new HttpError(error.message,500));
+    }
+};
+
+const deleteUser = async(req,res,next)=>{
+    try{
         const user = req.user;
 
-        await user.deleteOne(user);
+        await user.deleteOne();
 
         res.status(200).json({
             success: true,
             message: "delete successFully",
-             
+
         });
     }catch(error){
-        return next(HttpError(error.message,500));
+        return next(new HttpError(error.message,500));
     }
 };
 
 
 
 // export controller
-export default { add, getAll, login, authLogin,update,logOut };
+export default { add, getAll, login, authLogin, update, logOut , logOutAll , deleteUser };

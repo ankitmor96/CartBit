@@ -25,7 +25,13 @@ router.post("/authLogin" ,auth, userController.authLogin);
 router.patch("/update" , auth , userController.update);
 
 //user auth logout
-router.delete("/logOut" , auth , userController.logOut);
+router.post("/logOut" , auth , userController.logOut);
+
+// LogoutAll tokens 
+router.post("/logOutAll" , auth , userController.logOutAll);
+
+// delete user
+router.delete("/deleteUser", auth , userController.deleteUser);
 
 
 //export routes
