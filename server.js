@@ -3,12 +3,7 @@ import HttpError from "./middleware/HttpError.js";
 import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.routes.js";
-// import getAllRoutes from "./routes/user.routes.js";
-// import loginRoutes from "./routes/user.routes.js";
-// import authLoginRoutes from "./routes/user.routes.js";
-// import updateRoutes from "./routes/user.routes.js";
-// import logOutRoutes from "./routes/user.routes.js";
-// import addRoutes from "./routes/user.routes.js";
+
 
 
 // .env file configration
@@ -20,12 +15,7 @@ app.use(express.json());
 
 // user routes
 app.use("/User", userRoutes);
-// app.use("/add", addRoutes);
-// app.use("/login", loginRoutes);
-// app.use("/authLogin", authLoginRoutes);
-// app.use("/update", updateRoutes);
-// app.use("/logOut", logOutRoutes);
-// app.use("/getAll", getAllRoutes);
+
 
 
 // routes
