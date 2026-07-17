@@ -1,3 +1,4 @@
+import cloudinary from "../config/cloudinary.js";
 import HttpError from "../middleware/HttpError.js";
 import User from "../model/user.model.js";
 
@@ -12,7 +13,9 @@ const add = async (req, res, next) => {
             email,
             password,
             phone,
-            address
+            address,
+            ProfilePic:req.file?.path || null,
+            cloudinary_id:req.file?.filename || null,
         });
 
         const alreadyUser = await User.findOne({ email });// check email id

@@ -42,13 +42,19 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    tokens:[
-    {
-        token:{
-            type:String,
-            required:true
-        }
+    ProfilePic: {
+        type: String,
     },
+    cloudinary_id: {
+        type: String,
+    },
+    tokens: [
+        {
+            token: {
+                type: String,
+                required: true
+            }
+        },
     ],
 },
     {
@@ -110,7 +116,34 @@ userSchema.methods.generateAuthToken = async function () {
         await user.save();
 
         return token;
-    }catch(error){
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+userSchema.methods.toJSON = function () {
+    try {
+
+        const user = this;
+
+        const userObject = user.toObject();
+
+        delete userObject.password;
+
+        delete userObject._id;
+
+        // delete userObject.tokens;
+
+        delete userObject.createdAt;
+
+        delete userObject.updatedAt;
+
+        delete userObject.__v;
+
+        return userObject;
+
+
+    } catch (error) {
         throw new Error(error.message);
     }
 };

@@ -4,6 +4,7 @@ import validate from "../middleware/validate.js";
 import registerSchema from "../validation/register.Schema.js";
 import auth from "../middleware/auth.js";
 import checkRole from "../middleware/checkRole.js";
+import uploads from "../middleware/uploads.js";
 
 
 // create router variable 
@@ -11,7 +12,7 @@ const router = express.Router();
 
 
 // using post method create new user
-router.post("/add" ,validate(registerSchema), userController.add);
+router.post("/add" ,validate(registerSchema),uploads.single("ProfilePic"), userController.add);
 
 //  register user login 
 router.post("/login", userController.login);
