@@ -1,7 +1,7 @@
 import express from "express";
 import userController from "../controller/user.controller.js";
 import validate from "../middleware/validate.js";
-import registerSchema from "../validation/register.Schema.js";
+import  registerSchema,{ updateSchema } from "../validation/register.Schema.js";
 import auth from "../middleware/auth.js";
 import checkRole from "../middleware/checkRole.js";
 import uploads from "../middleware/uploads.js";
@@ -21,7 +21,7 @@ router.post("/login", userController.login);
 router.post("/authLogin" ,auth, userController.authLogin);
 
 // user update
-router.patch("/update" , auth , userController.update);
+router.patch("/update" , auth ,validate(updateSchema), userController.update);
 
 // show all user
 router.get("/getAll" , auth , checkRole("admin") , userController.getAll);

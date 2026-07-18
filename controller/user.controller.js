@@ -104,6 +104,14 @@ const update = async (req, res, next) => {
             user[update] = req.body[update];
         });
 
+        if(req.file){
+            if(user.cloudinary_id){
+               await cloudinary.uploader.destroy(user.cloudinary_id);
+            }
+            user.ProfilePic = req.file?.path;
+            user.cloudinary_id = req.file?.filename;
+        }
+
         await user.save();
 
         res.status(200).json({
