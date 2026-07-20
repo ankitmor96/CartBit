@@ -14,8 +14,8 @@ const add = async (req, res, next) => {
             password,
             phone,
             address,
-            ProfilePic:req.file?.path || null,
-            cloudinary_id:req.file?.filename || null,
+            ProfilePic: req.file?.path || null,
+            cloudinary_id: req.file?.filename || null,
         });
 
         const alreadyUser = await User.findOne({ email });// check email id
@@ -87,11 +87,21 @@ const authLogin = async (req, res, next) => {
 const update = async (req, res, next) => {
     try {
 
-        const user = req.user;
+        const TargetUser = req.params.id || req.user._id;
+
+        const user = await User.findById(TargetUser);
+
+        if(!user){
+            return next (new HttpError("user not found",404));
+        }
 
         const updates = Object.keys(req.body);
 
-        const allowedFields = ["name", "phone", "address"];
+        let allowedFields = ["name", "phone", "address"];
+
+        if (req.user.role === "admin") {
+            allowedFields = [...allowedFields, "isVerified"];
+        }
 
         const isValidUpdates = updates.every((field) =>
             allowedFields.includes(field));
@@ -104,9 +114,9 @@ const update = async (req, res, next) => {
             user[update] = req.body[update];
         });
 
-        if(req.file){
-            if(user.cloudinary_id){
-               await cloudinary.uploader.destroy(user.cloudinary_id);
+        if (req.file) {
+            if (user.cloudinary_id) {
+                await cloudinary.uploader.destroy(user.cloudinary_id);
             }
             user.ProfilePic = req.file?.path;
             user.cloudinary_id = req.file?.filename;
@@ -180,7 +190,10 @@ const logOutAll = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
     try {
-        const user = req.user;
+
+        const TargetUser = req.params.id || req.user._id;
+
+        const user = await User.findById(TargetUser);
 
         await user.deleteOne();
 

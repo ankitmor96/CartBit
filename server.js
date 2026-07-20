@@ -3,6 +3,7 @@ import HttpError from "./middleware/HttpError.js";
 import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.routes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 
 
@@ -15,6 +16,9 @@ app.use(express.json());
 
 // user routes
 app.use("/User", userRoutes);
+
+// admin routes
+app.use("/admin" , adminRoutes);
 
 
 
