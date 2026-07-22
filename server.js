@@ -4,6 +4,7 @@ import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import restaurantRoutes from "./routes/restaurant.routes.js";
 
 
 
@@ -19,6 +20,9 @@ app.use("/User", userRoutes);
 
 // admin routes
 app.use("/admin" , adminRoutes);
+
+// restaurant routes
+app.use("/restaurant" , restaurantRoutes);
 
 
 
