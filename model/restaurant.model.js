@@ -47,6 +47,7 @@ const restaurantSchema = new mongoose.Schema({
     },
     owner:{
         type:mongoose.Schema.Types.ObjectId,
+        ref:"User",  // reference by user model get user id
         required:true 
     },
 

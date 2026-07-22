@@ -6,7 +6,6 @@ const add = async (req, res, next) => {
 
         const { restaurantName, description, address, state, city, phone, openingTime, closingTime, isOpen } = req.body;
 
-        console.log(req.file);
 
         const newRestaurant = await restaurantModel.create({
             restaurantName,

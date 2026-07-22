@@ -14,16 +14,10 @@ const auth = async function (req, res, next) {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        console.log("Header:", authHeader);
-        console.log("Token:", token);
-        console.log("Decoded:", decoded);
-
         const user = await User.findOne({
             _id: decoded._id,
             "tokens.token": token,
         });
-
-        console.log("User:", user);
 
         if (!user) {
             return next(new HttpError("token not found", 400));
