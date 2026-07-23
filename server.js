@@ -76,13 +76,13 @@ StartServer();
 async function ChekRestaurant() {
     try {
 
-        const Restaurant = await restaurantModel // manualy process read restaurant
-        .findById("6a604b4bf0d148742078a6b1")
-        .populate("owner");
+        const Restaurant = await restaurantModel // manually process read restaurant
+        .findById("6a5f6877308ede49f65d1a81")
+        .populate("owner"," name email phone address role tokens -_id");
 
         console.log("Restaurant :", Restaurant);
 
-        // const owner = await User.findById(Restaurant.owner);  // manualy process read owner 
+        // const owner = await User.findById(Restaurant.owner);  // manually process read owner 
 
         // console,log("owner :", Restaurant.owner);
 
