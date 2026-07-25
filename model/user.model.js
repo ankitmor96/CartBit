@@ -59,8 +59,17 @@ const userSchema = new mongoose.Schema({
 },
     {
         timestamps: true,
+
+        toJSON: {virtuals:true},
+        toObject: {virtuals:true}
     },
 );
+
+userSchema.virtual("restaurants",{
+     ref: "Restaurant",
+     localField: "_id",
+     foreignField: "owner"
+});
 
 // user password bcrypt.hash ---- like #####
 userSchema.pre("save", async function () {

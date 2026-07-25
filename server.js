@@ -73,23 +73,40 @@ const StartServer = async () => {
 
 StartServer();
 
-async function ChekRestaurant() {
+// async function ChekRestaurant() {
+//     try {
+
+//         const Restaurant = await restaurantModel // manually process read restaurant
+//             .findById("6a5f6877308ede49f65d1a81")
+//             .populate("owner", " name email phone address role tokens -_id");
+
+//         console.log("Restaurant :", Restaurant);
+
+//         // const owner = await User.findById(Restaurant.owner);  // manually process read owner 
+
+//         // console,log("owner :", Restaurant.owner);
+
+//     } catch (error) {
+//         console.log(error);
+//     }
+
+// };
+
+// ChekRestaurant();
+
+async function virtualRestaurant() {
     try {
 
-        const Restaurant = await restaurantModel // manually process read restaurant
-        .findById("6a5f6877308ede49f65d1a81")
-        .populate("owner"," name email phone address role tokens -_id");
+        const owner = await User.findById("6a5e19eef2636419634b9688").populate("restaurants");
 
-        console.log("Restaurant :", Restaurant);
+        // console.log("owner :", owner);
 
-        // const owner = await User.findById(Restaurant.owner);  // manually process read owner 
+        console.log(owner.restaurants);
 
-        // console,log("owner :", Restaurant.owner);
 
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
     }
-
 };
 
-ChekRestaurant();
+virtualRestaurant();
