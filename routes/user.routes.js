@@ -21,7 +21,7 @@ router.post("/login", userController.login);
 router.post("/authLogin" ,auth, userController.authLogin);
 
 // user update
-router.patch("/update" , auth ,validate(updateSchema), userController.update);
+router.patch("/update" , auth , validate(updateSchema), userController.update);
 
 // show all user
 router.get("/getAll" , auth , checkRole("admin") , userController.getAll);

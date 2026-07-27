@@ -52,11 +52,16 @@ const restaurantSchema = Joi.object({
         "any.required":"closingTime is required"
     }),
 
-    isOpen: Joi.boolean().required().messages({
+    isOpen: Joi.boolean().messages({
         "boolean.base":" isOpen is must be in boolean",
-        "any.required":" isOpen is required"
+        // "any.required":" isOpen is required"
     }),
 
 });
+
+export const updateRestaurantSchema = restaurantSchema
+.fork(["restaurantName","description","address","state","city","phone","openingTime","closingTime"] , (field)=> field.optional())
+.fork(["isOpen"], (field)=> field.forbidden().messages({"any.unKnown":"This field is not updated"}))
+.or("restaurantName","description","address","state","city","phone","openingTime","closingTime");
 
 export default restaurantSchema;

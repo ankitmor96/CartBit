@@ -35,7 +35,7 @@ const restaurantSchema = new mongoose.Schema({
     },
     isOpen:{
         type:Boolean,
-        required:true 
+        // required:true 
     },
     restaurantImage:{
         type:String,
