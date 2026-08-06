@@ -15,10 +15,10 @@ const providerSchema = Joi.object({
         "any.required":"restaurant is required"
     }),
 
-    documents: Joi.string().required().messages({
-        "string.base":"documents must be in string",
-        "any.required":"documents is required"
-    }),
+    // documents: Joi.string().required().messages({
+    //     "string.base":"documents must be in string",
+    //     "any.required":"documents is required"
+    // }),
 
     bankAccountNumber: Joi.string().required().messages({
         "string.base":"bankAccountNumber must be in string",
