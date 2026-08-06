@@ -7,6 +7,7 @@ import adminRoutes from "./routes/admin.Routes.js";
 import restaurantRoutes from "./routes/restaurant.routes.js";
 import restaurantModel from "./model/restaurant.model.js";
 import User from "./model/user.model.js";
+import ProviderRoutes from "./routes/provider.Routes.js";
 
 
 
@@ -25,6 +26,9 @@ app.use("/admin", adminRoutes);
 
 // restaurant routes
 app.use("/restaurant", restaurantRoutes);
+
+// provider routes
+app.use("/Provider", ProviderRoutes);
 
 
 
