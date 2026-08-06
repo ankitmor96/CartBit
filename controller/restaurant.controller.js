@@ -37,20 +37,93 @@ const add = async (req, res, next) => {
 const getAll = async (req, res, next) => {
     try {
 
-        const Restaurant = await restaurantModel.find({});
+        let {
+            page = 1,
+            limit = 10,
+            isOpen,
+            search,
+            city,
+            sort ="createdAt",
+            order = "desc",
+        } = req.query;
 
-        if (Restaurant.length === 0) {
-            return next(new HttpError("Restaurant not found", 404));
+        page = Number(page);
+
+        limit = Number(limit);
+
+        const filter = {};
+
+        if(search){
+            filter.restaurantName = {
+                $regex: search,
+                $options: "i",
+            };
+        }
+
+        if(city){
+            filter.city = city;
+        }
+
+        if(isOpen !== undefined){
+            filter.isOpen = isOpen === "true" ;  
+        }
+
+        const sortOption = {
+            [sort] : order === "asc" ? 1 : -1 
+        };
+
+        const totalRestaurant = await restaurantModel.countDocuments(filter);
+
+        const restaurants = await restaurantModel
+
+        .find(filter)
+        .populate("owner","name email address -_id")
+        .sort(sortOption)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean();
+
+        if(restaurants.length === 0){
+            res.status(404).json({
+                success : true,
+                message : "restaurant data not found"
+            });
+        }
+
+        res.status(200).json({
+            success:true,
+            message:"restaurants data fetched",
+            totalRestaurant: totalRestaurant,
+            totalPages: Math.ceil(totalRestaurant / limit),
+            currentPage: page,
+            restaurants
+        });
+
+        
+    } catch (error) {
+        return next(new HttpError(error.message, 500));
+    }
+};
+
+const getMyRestaurant = async (req,res,next)=>{
+    try{
+
+        const restaurants = await restaurantModel.findOne({
+            owner : req.user._id
+        });
+
+        if(restaurantModel.length === 0){
+            return next(new HttpError("restaurant not found",404));
         }
 
         res.status(200).json({
             success: true,
-            message: "all restaurant data fetched successFully",
-            Restaurant
+            message: "user Restaurant data fetched successFully",
+            data: restaurants
         });
-
-    } catch (error) {
-        return next(new HttpError(error.message, 500));
+        
+    }catch(error){
+        return next(new HttpError(error.message,500));
     }
 };
 
@@ -146,4 +219,4 @@ const deleteRestaurant = async (req, res, next) => {
     }
 };
 
-export default { add, getAll, updateRestaurant, deleteRestaurant };
+export default { add, getAll, getMyRestaurant , updateRestaurant, deleteRestaurant };
