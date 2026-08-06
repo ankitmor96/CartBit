@@ -3,7 +3,7 @@ import HttpError from "./middleware/HttpError.js";
 import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.routes.js";
-import adminRoutes from "./routes/adminRoutes.js";
+import adminRoutes from "./routes/admin.Routes.js";
 import restaurantRoutes from "./routes/restaurant.routes.js";
 import restaurantModel from "./model/restaurant.model.js";
 import User from "./model/user.model.js";
