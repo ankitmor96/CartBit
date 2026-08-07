@@ -99,12 +99,9 @@ export const RestaurantUploads = createUploads({
 
 export const ProviderUploads = createUploads({
     folder: "CartBit/documents",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    allowed_formats: ["pdf"],
     MimeType: [
-        "image/jpg",
-        "image/jpeg",
-        "image/png",
-        "image/webp"
+        "image/pdf",
     ]
 });
 

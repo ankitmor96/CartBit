@@ -75,7 +75,6 @@ const getAll = async (req, res, next) => {
         const totalRestaurant = await restaurantModel.countDocuments(filter);
 
         const restaurants = await restaurantModel
-
         .find(filter)
         .populate("owner","name email address -_id")
         .sort(sortOption)
