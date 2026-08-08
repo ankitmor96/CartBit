@@ -1,6 +1,9 @@
 import cloudinary from "../config/cloudinary.js";
 import HttpError from "../middleware/HttpError.js";
 import User from "../model/user.model.js";
+import welcomeEmail from "../Templets/welcomeTemplets.js";
+import sendMail from "../utils/SendMail.js";
+
 
 
 // create new suer
@@ -25,6 +28,12 @@ const add = async (req, res, next) => {
         }
 
         await newUser.save(); // save new user
+
+        await sendMail({
+            to: newUser.email,
+            name:newUser.name,
+            email:process.env.SMTP_USER,
+        });
 
         res.status(201).json({
             success: true,
