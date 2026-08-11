@@ -24,6 +24,15 @@ const providerSchema = Joi.object({
         "string.base":"bankAccountNumber must be in string",
         "any.required":"bankAccountNumber is required"
     }),
+
+    isVerified: Joi.boolean().default(false).messages({
+        "boolean.base":"isVerified must be in boolean"
+    }),
 });
+
+export const privoderUpdateSchema = providerSchema
+.fork(["ownerName","restaurants","bankAccountNumber"], (field)=> field.optional())
+.fork(["isVerified"], (field)=> field.forbidden().messages({"any.unknown":"isVerified can not be updated"}))
+.or("ownerName","restaurants","bankAccountNumber");
 
 export default providerSchema;

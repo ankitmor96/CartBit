@@ -2,6 +2,7 @@ import HttpError from "../middleware/HttpError.js";
 import Provider from "../model/provider.model.js";
 import User from "../model/user.model.js";
 import sendMail from "../utils/SendMail.js";
+import cloudinary from "../config/cloudinary.js";
 
 
 const registerAsProvider = async (req, res, next) => {
@@ -76,58 +77,42 @@ const updateProvider = async (req, res, next) => {
                     "Only provider owner and owner must be admin", 404));
         }
 
-        if (req.body.ownerName) {
+        if (req.body.ownerName) {  // check owner name update
 
-            const newOwner = await User.findById(
-                req.body.ownerName
-            );
+            const newOwner = await User.findById(req.body.ownerName);
 
             if (!newOwner) {
-                return next(
-                    new HttpError("New owner not found", 404)
-                );
+                return next(new HttpError("New owner not found", 404));
             }
 
             if (newOwner.role !== "admin") {
-                return next(
-                    new HttpError(
-                        "New owner must be admin",
-                        403
-                    )
-                );
+                return next(new HttpError("New owner must be admin", 404));
             }
         }
 
-
-
-        if (req.files && req.files.length > 0) {
-
-            for (const publicId of provider.cloudinary_id) {
-                await cloudinary.uploader.destroy(publicId);
+        if (req.files && req.files.length !== 0) {   // check document update
+            for (const Providers of provider.cloudinary_id) {
+                await cloudinary.uploader.destroy(Providers, {
+                    resource_type: "raw"
+                });
             }
 
-            req.body.documents = req.files.map(
-                (file) => file.path
-            );
+            req.body.documents = req.files.map((file) => file.path);
 
-            req.body.cloudinary_id = req.files.map(
-                (file) => file.filename
-            );
+            req.body.cloudinary_id = req.files.map((file) => file.filename);
         }
 
 
-        // 5. Update ALL Provider fields using query
-        const updatedProvider =
-            await Provider.findByIdAndUpdate(
-                id,
-                {
-                    $set: req.body
-                },
-                {
-                    new: true,
-                    runValidators: true
-                }
-            );
+        const updatedProvider = await Provider.findByIdAndUpdate( // check bank account number update 
+            id,
+            {
+                $set: req.body
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
 
         res.status(200).json({
             success: true,
@@ -136,11 +121,10 @@ const updateProvider = async (req, res, next) => {
         });
 
     } catch (error) {
-        return next(
-            new HttpError(error.message, 500)
-        );
+        return next(new HttpError(error.message, 500));
     }
 };
+
 
 const DeleteProvider = async (req, res, next) => {
     try {
@@ -180,4 +164,4 @@ const DeleteProvider = async (req, res, next) => {
     }
 };
 
-export default { registerAsProvider, DeleteProvider };
+export default { registerAsProvider, DeleteProvider, updateProvider };
