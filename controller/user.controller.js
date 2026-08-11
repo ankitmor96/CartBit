@@ -31,8 +31,8 @@ const add = async (req, res, next) => {
 
         await sendMail({
             to: newUser.email,
-            name:newUser.name,
-            email:process.env.SMTP_USER,
+            name: newUser.name,
+            email: process.env.SMTP_USER,
         });
 
         res.status(201).json({
@@ -100,8 +100,8 @@ const update = async (req, res, next) => {
 
         const user = await User.findById(TargetUser);
 
-        if(!user){
-            return next (new HttpError("user not found",404));
+        if (!user) {
+            return next(new HttpError("user not found", 404));
         }
 
         const updates = Object.keys(req.body);
@@ -146,16 +146,71 @@ const update = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
     try {
-        const user = await User.find({});
 
-        if (user.length === 0) {
-            return next(new HttpError("user data not found", 404));
+        let {
+            page = 1,
+            limit = 10,
+            role,
+            search,
+            sort = "createdAt",
+            order = "desc"
+        } = req.query;
+
+        page = Number(page);
+
+        limit = Number(limit);
+
+        const filter = {};
+
+        if (role) {
+            filter.role = role;
         }
 
-        res.status(201).json({
+        if (search) {
+            filter.$or = [
+                {
+                    name: {
+                        $regex: search,
+                        $options: "i",
+                    },
+                },
+                {
+                    email: {
+                        $regex: search,
+                        $options: "i",
+                    },
+                },
+            ];
+        }
+
+        const sortOptions = {
+            [sort]: order === "asc" ? 1 : -1
+        }
+
+        const totalUser = await User.countDocuments(filter);
+
+        const users = await User
+            .find(filter)
+            .select("name email address -_id")
+            .sort(sortOptions)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .lean();
+
+        if (users.length === 0) {
+            res.status(404).json({
+                success: true,
+                message: "user data not fund",
+            });
+        }
+
+        res.status(200).json({
             success: true,
-            total: user.length,
-            data: user // display all user
+            message: "All user data found",
+            totalUser,
+            totalPage: Math.ceil(totalUser / limit),
+            currentPage: page,
+            users
         });
 
     } catch (error) {
