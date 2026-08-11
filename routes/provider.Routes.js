@@ -4,10 +4,13 @@ import providerSchema from "../validation/provider.Schema.js";
 import providerController from "../controller/provider.controller.js";
 import auth from "../middleware/auth.js";
 import {ProviderUploads} from "../middleware/uploads.js";
+import checkRole from "../middleware/checkRole.js";
 
 const router = express.Router();
 
 router.post("/registerAsProvider" ,auth , ProviderUploads.array("documents",2) , 
  validate(providerSchema) , providerController.registerAsProvider );
+
+router.delete("/DeleteProvider/:id" , auth , checkRole("admin") , providerController.DeleteProvider);
 
 export default router;

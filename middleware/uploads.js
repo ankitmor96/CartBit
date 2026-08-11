@@ -101,7 +101,7 @@ export const ProviderUploads = createUploads({
     folder: "CartBit/documents",
     allowed_formats: ["pdf"],
     MimeType: [
-        "image/pdf",
+        "application/pdf",
     ]
 });
 

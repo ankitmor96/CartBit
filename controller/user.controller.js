@@ -1,7 +1,6 @@
 import cloudinary from "../config/cloudinary.js";
 import HttpError from "../middleware/HttpError.js";
 import User from "../model/user.model.js";
-import welcomeEmail from "../Templets/welcomeTemplets.js";
 import sendMail from "../utils/SendMail.js";
 
 
@@ -32,7 +31,8 @@ const add = async (req, res, next) => {
         await sendMail({
             to: newUser.email,
             name: newUser.name,
-            email: process.env.SMTP_USER,
+            email: newUser.email,
+            action: "USER_ADDED"
         });
 
         res.status(201).json({
@@ -260,6 +260,13 @@ const deleteUser = async (req, res, next) => {
         const user = await User.findById(TargetUser);
 
         await user.deleteOne();
+
+        await sendMail({
+            to: newUser.email,
+            name: newUser.name,
+            email: newUser.email,
+            action: "USER_DELETED"
+        });
 
         res.status(200).json({
             success: true,

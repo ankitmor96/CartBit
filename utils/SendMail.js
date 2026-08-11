@@ -1,16 +1,23 @@
 import transporter from "../config/email.js";
-import welcomeEmail from "../Templets/welcomeTemplets.js";
+import actionEmail from "../Templets/actionEmail.js";
 
-const sendMail = async ({ to, subject, html, name, email }) => {
+const sendMail = async ({ to, subject, html, name, email, action , itemName }) => {
     try {
+
+        console.log("ACTION:", action);
+
+        const template = actionEmail({
+            name,
+            email,
+            action,
+            itemName
+        });
+
         const info = await transporter.sendMail({
-            from: '"CartBit" ,"ankitmor1811@gmail.com', // sender address
+            from: '"CartBit" ,<ankitmor1811@gmail.com>', // sender address
             to: to, // list of recipients
-            subject: "🎉 Welcome to CartBit!", // subject line
-            html: welcomeEmail({
-                name,
-                email
-            })
+            subject: template.subject,
+            html: template.html
         });
 
         console.log("MAIL TO:", to);

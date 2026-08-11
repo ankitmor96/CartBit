@@ -1,6 +1,7 @@
 import cloudinary from "../config/cloudinary.js";
 import HttpError from "../middleware/HttpError.js";
 import restaurantModel from "../model/restaurant.model.js";
+import sendMail from "../utils/SendMail.js";
 
 const add = async (req, res, next) => {
     try {
@@ -23,6 +24,14 @@ const add = async (req, res, next) => {
             owner: req.user._id
         });
 
+        await sendMail({
+            to: req.user.email,
+            name: req.user.name,
+            email: req.user.email,
+            itemName: newRestaurant.restaurantName,
+            action: "RESTAURANT_ADDED"
+        });
+
         res.status(201).json({
             success: true,
             message: "new restaurant add successFully",
@@ -43,7 +52,7 @@ const getAll = async (req, res, next) => {
             isOpen,
             search,
             city,
-            sort ="createdAt",
+            sort = "createdAt",
             order = "desc",
         } = req.query;
 
@@ -53,66 +62,66 @@ const getAll = async (req, res, next) => {
 
         const filter = {};
 
-        if(search){
+        if (search) {
             filter.restaurantName = {
                 $regex: search,
                 $options: "i",
             };
         }
 
-        if(city){
+        if (city) {
             filter.city = city;
         }
 
-        if(isOpen !== undefined){
-            filter.isOpen = isOpen === "true" ;  
+        if (isOpen !== undefined) {
+            filter.isOpen = isOpen === "true";
         }
 
         const sortOption = {
-            [sort] : order === "asc" ? 1 : -1 
+            [sort]: order === "asc" ? 1 : -1
         };
 
         const totalRestaurant = await restaurantModel.countDocuments(filter);
 
         const restaurants = await restaurantModel
-        .find(filter)
-        .populate("owner","name email address -_id")
-        .sort(sortOption)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .lean();
+            .find(filter)
+            .populate("owner", "name email address -_id")
+            .sort(sortOption)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .lean();
 
-        if(restaurants.length === 0){
+        if (restaurants.length === 0) {
             res.status(404).json({
-                success : true,
-                message : "restaurant data not found"
+                success: true,
+                message: "restaurant data not found"
             });
         }
 
         res.status(200).json({
-            success:true,
-            message:"restaurants data fetched",
+            success: true,
+            message: "restaurants data fetched",
             totalRestaurant: totalRestaurant,
             totalPages: Math.ceil(totalRestaurant / limit),
             currentPage: page,
             restaurants
         });
 
-        
+
     } catch (error) {
         return next(new HttpError(error.message, 500));
     }
 };
 
-const getMyRestaurant = async (req,res,next)=>{
-    try{
+const getMyRestaurant = async (req, res, next) => {
+    try {
 
         const restaurants = await restaurantModel.findOne({
-            owner : req.user._id
+            owner: req.user._id
         });
 
-        if(restaurantModel.length === 0){
-            return next(new HttpError("restaurant not found",404));
+        if (restaurantModel.length === 0) {
+            return next(new HttpError("restaurant not found", 404));
         }
 
         res.status(200).json({
@@ -120,9 +129,9 @@ const getMyRestaurant = async (req,res,next)=>{
             message: "user Restaurant data fetched successFully",
             data: restaurants
         });
-        
-    }catch(error){
-        return next(new HttpError(error.message,500));
+
+    } catch (error) {
+        return next(new HttpError(error.message, 500));
     }
 };
 
@@ -208,6 +217,15 @@ const deleteRestaurant = async (req, res, next) => {
 
         await Restaurant.deleteOne();
 
+
+        await sendMail({
+            to: req.user.email,
+            name: req.user.name,
+            email: req.user.email,
+            itemName: newRestaurant.restaurantName,
+            action: "RESTAURANT_DELETED"
+        });
+
         res.status(200).json({
             success: true,
             message: "Restaurant delete successFully"
@@ -218,4 +236,4 @@ const deleteRestaurant = async (req, res, next) => {
     }
 };
 
-export default { add, getAll, getMyRestaurant , updateRestaurant, deleteRestaurant };
+export default { add, getAll, getMyRestaurant, updateRestaurant, deleteRestaurant };
