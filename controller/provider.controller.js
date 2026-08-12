@@ -29,7 +29,8 @@ const registerAsProvider = async (req, res, next) => {
             restaurants,
             documents: req.files.map((file) => file.path),
             cloudinary_id: req.files.map((file) => file.filename),
-            bankAccountNumber
+            bankAccountNumber,
+            isVerified
         });
 
         user.role = "provider";
@@ -50,6 +51,86 @@ const registerAsProvider = async (req, res, next) => {
             success: true,
             message: "new Provider add successFully ",
             data: newProvider
+        });
+
+    } catch (error) {
+        return next(new HttpError(error.message, 500));
+    }
+};
+
+const getAllProvider = async (req, res, next) => {
+    try {
+
+        let {
+
+            page = 1,
+            limit = 10,
+            ownerName,
+            restaurants,
+            bankAccountNumber,
+            isVerified,
+            search,
+            sort = "createdAt",
+            order = "desc"
+        } = req.query;
+
+        page = Number(page);
+
+        limit = Number(limit);
+
+        const filter = {};
+
+        if (ownerName) {
+            filter.ownerName = ownerName;
+        }
+
+        if (restaurants) {
+            filter.restaurants = restaurants;
+        }
+
+        if (bankAccountNumber) {
+            filter.bankAccountNumber = bankAccountNumber;
+        }
+
+        if (isVerified !== undefined) {
+            filter.isVerified = isVerified === "true";
+        }
+
+        if (search) {
+            filter.restaurants = {
+                $regex: search,
+                $options: "i"
+            }
+        }
+
+        const sortOption = {
+            [sort]: order = "asc" ? 1 : -1
+        }
+
+        const totalProveder = await Provider.countDocuments(filter);
+
+        const AllProviders = await Provider
+            .find(filter)
+            .select("name email -_id")
+            .sort(sortOption)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .lean();
+
+        if (AllProviders.length === 0) {
+            res.status(404).json({
+                success: true,
+                message: "provider data not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "restaurants data fetched",
+            totalProveder: totalProveder,
+            totalPage: Math.ceil(totalProveder / limit),
+            currentPage: page,
+            AllProviders
         });
 
     } catch (error) {
@@ -164,4 +245,4 @@ const DeleteProvider = async (req, res, next) => {
     }
 };
 
-export default { registerAsProvider, DeleteProvider, updateProvider };
+export default { registerAsProvider, getAllProvider , updateProvider , DeleteProvider };
