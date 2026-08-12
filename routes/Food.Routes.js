@@ -10,4 +10,6 @@ const router = express.Router();
 
 router.post("/addFood" , auth , checkRole("admin","provider") , validate(FoodSchema) , FoodImageUploads.array("FoodImage",2) , FoodController.addFood);
 
+router.get("/getAllFood" , auth , checkRole("admin") , FoodController.getAllFood);
+
 export default router;

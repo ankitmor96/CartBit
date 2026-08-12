@@ -67,7 +67,6 @@ const getAllProvider = async (req, res, next) => {
             ownerName,
             restaurants,
             bankAccountNumber,
-            isVerified,
             search,
             sort = "createdAt",
             order = "desc"

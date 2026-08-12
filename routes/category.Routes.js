@@ -10,4 +10,6 @@ const router = express.Router();
 
 router.post("/addCategory" , auth , checkRole("admin") , CategoryUploads.array("CategoryImage",2) , validate(CategorySchema) , categoryController.addCategory);
 
+router.get("/getAllCategory" , auth , checkRole("admin") , categoryController.getAllCategory);
+
 export default router;
