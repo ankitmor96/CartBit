@@ -16,11 +16,11 @@ const FoodSchema = Joi.object({
         "any.required": "price is required"
     }),
 
-    descreption: Joi.string().min(5).max(300).required().messages({
-        "string.base": "descreption is must be in string",
-        "string.min": "descreption is minimum 5 charachter long",
-        "string.max": "descreption is maximum 300 charachter long",
-        "any.required": "descreption is required"
+    description: Joi.string().min(5).max(300).required().messages({
+        "string.base": "description is must be in string",
+        "string.min": "description is minimum 5 charachter long",
+        "string.max": "description is maximum 300 charachter long",
+        "any.required": "description is required"
     }),
 
     restaurantName: Joi.string().min(3).max(15).required().messages({
@@ -37,22 +37,14 @@ const FoodSchema = Joi.object({
         "any.required": "providerName is required"
     }),
 
-    FoodType: Joi.string().valid("veg", "non-veg").default("veg").required().messages({
-        "string.base": "FoodType is must be in string",
-        "any.required": "FoodType is required"
+    category: Joi.string().required().messages({
+        "string.base": "category is must be in string",
+        "any.required": "category is required"
     }),
 
     preparingTime: Joi.string().pattern(/^([01]\d|2[0-3]):([0-5]\d)$/).required().messages({
         "string.pattern.base": "preparingTime is must be in pattern",
         "any.required": "preparingTime is required"
-    }),
-
-    isAvailable: Joi.boolean().default(true).messages({
-        "boolean.base": "isVerified must be in boolean"
-    }),
-
-    isVerified: Joi.boolean().default(false).messages({
-        "boolean.base": "isVerified must be in boolean"
     }),
 
 });

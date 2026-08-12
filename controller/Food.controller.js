@@ -6,7 +6,7 @@ const addFood = async (req, res, next) => {
     try {
 
 
-        const { name, price, descreption, restaurantName, providerName, FoodType, preparingTime, isAvailable, isVerified } = req.body;
+        const { name, price, description, restaurantName, providerName,category, FoodType, preparingTime, isAvailable, isVerified } = req.body;
 
         if(!req.files || req.files.length === 0){
             return next(new HttpError("Food image is required",400));
@@ -15,14 +15,12 @@ const addFood = async (req, res, next) => {
         const newFood = await Food.create({
             name,
             price,
-            descreption,
+            description,
             restaurantName,
             providerName,
-            FoodType,
+            category,
             preparingTime,
-            isAvailable,
-            isVerified,
-            image: req.files.map((field) => field.path),
+            FoodImage: req.files.map((field) => field.path),
             cloudinary_id: req.files.map((field) => field.filename)
         });
 

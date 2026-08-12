@@ -30,7 +30,6 @@ const registerAsProvider = async (req, res, next) => {
             documents: req.files.map((file) => file.path),
             cloudinary_id: req.files.map((file) => file.filename),
             bankAccountNumber,
-            isVerified
         });
 
         user.role = "provider";

@@ -106,12 +106,23 @@ export const ProviderUploads = createUploads({
 });
 
 export const FoodImageUploads = createUploads({
-    folder: "CartBit/image",
+    folder: "CartBit/FoodImage",
     allowed_formats:["jpg","png","jpeg","webp"],
     MimeType:[
         "image/jpg",
         "image/png",
         "image/jpeg",
+        "image/webp"
+    ]
+});
+
+export const CategoryUploads = createUploads({
+    folder: "CartBit/CategoryImage",
+    allowed_formats: ["jpg","png","jpeg","webp"],
+    MimeType: [
+        "image/jpg",
+        "image/jpeg",
+        "image/png",
         "image/webp"
     ]
 });

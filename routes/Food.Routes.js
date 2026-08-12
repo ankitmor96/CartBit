@@ -8,6 +8,6 @@ import FoodSchema from "../validation/Food.Schema.js"
 
 const router = express.Router();
 
-router.post("/addFood" , auth , checkRole("admin","provider") , validate(FoodSchema) , FoodImageUploads.array("image",2) , FoodController.addFood);
+router.post("/addFood" , auth , checkRole("admin","provider") , validate(FoodSchema) , FoodImageUploads.array("FoodImage",2) , FoodController.addFood);
 
 export default router;

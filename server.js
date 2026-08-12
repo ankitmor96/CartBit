@@ -9,6 +9,7 @@ import restaurantModel from "./model/restaurant.model.js";
 import User from "./model/user.model.js";
 import ProviderRoutes from "./routes/provider.Routes.js";
 import FoodRoutes from "./routes/Food.Routes.js";
+import CategoryRoutes from "./routes/category.Routes.js";
 
 
 
@@ -33,6 +34,9 @@ app.use("/Provider", ProviderRoutes);
 
 // Food routes
 app.use("/Food", FoodRoutes);
+
+//category routes
+app.use("/Categories", CategoryRoutes);
 
 // routes
 app.get("/", (req, res, next) => {
