@@ -170,7 +170,7 @@ const DeleteCategory = async (req, res, next) => {
         const category = await Category.findById(id);
 
         if (!category) {
-            return next(new HttpError("Providers data not found", 404));
+            return next(new HttpError("category data not found", 404));
         }
 
         const owner = await User.findById(food.ownerName); // provider as owner define by id
@@ -189,17 +189,17 @@ const DeleteCategory = async (req, res, next) => {
 
         await category.deleteOne();
 
-        await sendMail({
-            to: req.user.email,
-            name: req.user.name,
-            email: req.user.email,
-            // itemName: ,
-            action: "PROVIDER_DELETED"
-        });
+        // await sendMail({
+        //     to: req.user.email,
+        //     name: req.user.name,
+        //     email: req.user.email,
+        //     // itemName: ,
+        //     action: "PROVIDER_DELETED"
+        // });
 
         res.status(200).json({
             success: true,
-            message: " Provider delete successFully ",
+            message: " category delete successFully ",
         });
 
     } catch (error) {

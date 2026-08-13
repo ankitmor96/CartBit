@@ -2,6 +2,7 @@ import Food from "../model/Food.model.js";
 import HttpError from "../middleware/HttpError.js";
 import cloudinary from "../config/cloudinary.js";
 import sendMail from "../utils/SendMail.js";
+import User from "../model/user.model.js";
 
 
 const addFood = async (req, res, next) => {
@@ -204,7 +205,7 @@ const DeleteFood = async (req, res, next) => {
         const food = await Food.findById(id);
 
         if (!food) {
-            return next(new HttpError("Providers data not found", 404));
+            return next(new HttpError("food data not found", 404));
         }
 
         const owner = await User.findById(food.ownerName); // provider as owner define by id
@@ -223,17 +224,17 @@ const DeleteFood = async (req, res, next) => {
 
         await food.deleteOne();
 
-        await sendMail({
-            to: req.user.email,
-            name: req.user.name,
-            email: req.user.email,
-            // itemName: ,
-            action: "PROVIDER_DELETED"
-        });
+        // await sendMail({
+        //     to: req.user.email,
+        //     name: req.user.name,
+        //     email: req.user.email,
+        //     // itemName: ,
+        //     action: "PROVIDER_DELETED"
+        // });
 
         res.status(200).json({
             success: true,
-            message: " Provider delete successFully ",
+            message: " food delete successFully ",
         });
 
     } catch (error) {
