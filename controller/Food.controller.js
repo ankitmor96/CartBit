@@ -32,9 +32,9 @@ const addFood = async (req, res, next) => {
 
         await sendMail({
             to: req.user.email,
-            name:req.user.name,
-            email:req.user.email,
-            action:""
+            name: req.user.name,
+            email: req.user.email,
+            action: ""
         });
 
         res.status(201).json({
@@ -196,4 +196,49 @@ const updateFood = async (req, res, next) => {
     }
 };
 
-export default { addFood, getAllFood, updateFood };
+const DeleteFood = async (req, res, next) => {
+    try {
+
+        const id = req.params.id;
+
+        const food = await Food.findById(id);
+
+        if (!food) {
+            return next(new HttpError("Providers data not found", 404));
+        }
+
+        const owner = await User.findById(food.ownerName); // provider as owner define by id
+
+        if (!owner || owner.role !== "admin") {
+            return next(new HttpError("only provider owner with user admin can delete data", 404));
+        }
+
+        if (food.cloudinary_id && food.cloudinary_id.length !== 0) {
+            for (const cloudinaryId of food.cloudinary_id) {
+                await cloudinary.uploader.destroy(cloudinaryId, {
+                    resource_type: "raw"
+                });
+            }
+        }
+
+        await food.deleteOne();
+
+        await sendMail({
+            to: req.user.email,
+            name: req.user.name,
+            email: req.user.email,
+            // itemName: ,
+            action: "PROVIDER_DELETED"
+        });
+
+        res.status(200).json({
+            success: true,
+            message: " Provider delete successFully ",
+        });
+
+    } catch (error) {
+        return next(new HttpError(error.message, 500));
+    }
+};
+
+export default { addFood, getAllFood, updateFood , DeleteFood};

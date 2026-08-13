@@ -16,4 +16,6 @@ router.get("/getAllFood" , auth , checkRole("admin") , FoodController.getAllFood
 
 router.patch("/updateFood/:id" , auth , authLimiter , checkRole("admin") , validate(foodUpdateSchema) , FoodImageUploads.array("FoodImage", 2) , FoodController.updateFood);
 
+router.delete("/DeleteFood" , auth , checkRole("admin") , FoodController.DeleteFood);
+
 export default router;

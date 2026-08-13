@@ -51,49 +51,49 @@ const getAllCategory = async (req, res, next) => {
 
         const filter = {};
 
-        if(name){
-            filter.name = name ;
+        if (name) {
+            filter.name = name;
         }
 
-        if(description){
+        if (description) {
             filter.description = description;
         }
 
-        if(search){
+        if (search) {
             filter.name = {
-                $regex : search,
-                $options : "i"
+                $regex: search,
+                $options: "i"
             }
         }
 
         const sortOption = {
-            [sort] : order === "ase" ? 1 : -1 
+            [sort]: order === "ase" ? 1 : -1
         }
 
         const totalCategory = await Category.countDocuments(filter);
 
         const categories = await Category
-        .find(filter)
-        .select("name description -_id")
-        .sort(sortOption)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .lean()
+            .find(filter)
+            .select("name description -_id")
+            .sort(sortOption)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .lean()
 
-        if(!categories || categories.length === 0){
+        if (!categories || categories.length === 0) {
             res.status(404).json({
-                success:true,
-                message:"category data not found"
+                success: true,
+                message: "category data not found"
             });
         }
 
         res.status(200).json({
-            success:true,
-            message:"All category data fetched",
+            success: true,
+            message: "All category data fetched",
             categories,
             totalCategory: totalCategory,
-            tlimitotalPage : Math.ceil(totalCategory/limit),
-            currentPage : page,
+            tlimitotalPage: Math.ceil(totalCategory / limit),
+            currentPage: page,
 
         });
 
@@ -115,7 +115,7 @@ const updateCategory = async (req, res, next) => {
 
         const updates = Object.keys(req.body);
 
-        const allowedFields = ["name","description"];
+        const allowedFields = ["name", "description"];
 
         const isValidUpdates = updates.every(
             (field) => allowedFields.includes(field)
@@ -131,7 +131,7 @@ const updateCategory = async (req, res, next) => {
 
         if (req.files && req.files.length !== 0) {
             if (category.cloudinary_id && category.cloudinary_id.length !== 0) {
-                for (const cloudinaryId of category.cloudinary_id){
+                for (const cloudinaryId of category.cloudinary_id) {
                     await cloudinary.uploader.destroy(cloudinaryId,
                         {
                             resource_type: "image"
@@ -162,4 +162,49 @@ const updateCategory = async (req, res, next) => {
     }
 };
 
-export default { addCategory, getAllCategory , updateCategory};
+const DeleteCategory = async (req, res, next) => {
+    try {
+
+        const id = req.params.id;
+
+        const category = await Category.findById(id);
+
+        if (!category) {
+            return next(new HttpError("Providers data not found", 404));
+        }
+
+        const owner = await User.findById(food.ownerName); // provider as owner define by id
+
+        if (!owner || owner.role !== "admin") {
+            return next(new HttpError("only provider owner with user admin can delete data", 404));
+        }
+
+        if (category.cloudinary_id && category.cloudinary_id.length !== 0) {
+            for (const cloudinaryId of category.cloudinary_id) {
+                await cloudinary.uploader.destroy(cloudinaryId, {
+                    resource_type: "raw"
+                });
+            }
+        }
+
+        await category.deleteOne();
+
+        await sendMail({
+            to: req.user.email,
+            name: req.user.name,
+            email: req.user.email,
+            // itemName: ,
+            action: "PROVIDER_DELETED"
+        });
+
+        res.status(200).json({
+            success: true,
+            message: " Provider delete successFully ",
+        });
+
+    } catch (error) {
+        return next(new HttpError(error.message, 500));
+    }
+};
+
+export default { addCategory, getAllCategory, updateCategory , DeleteCategory};

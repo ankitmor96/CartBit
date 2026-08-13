@@ -16,4 +16,6 @@ router.get("/getAllCategory" , auth , checkRole("admin") , categoryController.ge
 
 router.patch("/updateCategory/:id" , auth, authLimiter , checkRole("admin") , CategoryUploads.array("CategoryImage", 2), validate(categoryUpdateSchema), categoryController.updateCategory);
 
+router.delete("/DeleteCategory" , auth , checkRole("admin") , categoryController.DeleteCategory);
+
 export default router;
