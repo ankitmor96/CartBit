@@ -5,6 +5,7 @@ import  registerSchema,{ updateSchema } from "../validation/register.Schema.js";
 import auth from "../middleware/auth.js";
 import checkRole from "../middleware/checkRole.js";
 import {UserUploads} from "../middleware/uploads.js";
+import {authLimiter} from "../middleware/RateLimiter.js";
 
 
 // create router variable 
@@ -12,25 +13,25 @@ const router = express.Router();
 
 
 // using post method create new user
-router.post("/add" ,validate(registerSchema),UserUploads.single("ProfilePic"), userController.add);
+router.post("/add" , authLimiter ,validate(registerSchema),UserUploads.single("ProfilePic"), userController.add);
 
 //  register user login 
-router.post("/login", userController.login);
+router.post("/login",authLimiter, userController.login);
 
 // user auth login
 router.post("/authLogin" ,auth, userController.authLogin);
 
 // user update
-router.patch("/update" , auth , validate(updateSchema), userController.update);
+router.patch("/update" , auth , authLimiter , validate(updateSchema), userController.update);
 
 // show all user
 router.get("/getAll" , auth , checkRole("admin") , userController.getAll);
 
 //user auth logout
-router.post("/logOut" , auth , userController.logOut);
+router.post("/logOut" , auth  , userController.logOut);
 
 // LogoutAll tokens 
-router.post("/logOutAll" , auth , userController.logOutAll);
+router.post("/logOutAll" , auth  , userController.logOutAll);
 
 // delete user
 router.delete("/deleteUser", auth , userController.deleteUser);

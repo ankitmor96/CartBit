@@ -10,6 +10,9 @@ import User from "./model/user.model.js";
 import ProviderRoutes from "./routes/provider.Routes.js";
 import FoodRoutes from "./routes/Food.Routes.js";
 import CategoryRoutes from "./routes/category.Routes.js";
+import rateLimiter from "./middleware/RateLimiter.js";
+import helmet from "helmet";
+import cors from "cors";
 
 
 
@@ -17,6 +20,12 @@ import CategoryRoutes from "./routes/category.Routes.js";
 dotenv.config({ path: "./.env" });
 
 const app = express();
+
+app.use(rateLimiter);
+
+app.use(helmet());
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -37,6 +46,7 @@ app.use("/Food", FoodRoutes);
 
 //category routes
 app.use("/Categories", CategoryRoutes);
+
 
 // routes
 app.get("/", (req, res, next) => {

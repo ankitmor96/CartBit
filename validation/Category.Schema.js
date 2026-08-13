@@ -18,4 +18,8 @@ const CategorySchema = Joi.object({
 
 });
 
+export const categoryUpdateSchema = CategorySchema
+    .fork(["name", "description"],(field) => field.optional())
+    .or("name", "description");
+
 export default CategorySchema;

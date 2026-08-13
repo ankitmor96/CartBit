@@ -6,14 +6,15 @@ import {UserUploads} from "../middleware/uploads.js";
 import validate from "../middleware/validate.js";
 import { updateSchema } from "../validation/register.Schema.js";
 import adminController from "../controller/admin.controller.js"
+import { authLimiter } from "../middleware/RateLimiter.js";
 
 const router = express.Router();
 
 // getAll user fetched by admin
-router.get("/AllUser" , auth , checkRole("admin") , adminController.getAll);
+router.get("/AllUser" , auth , authLimiter , checkRole("admin") , adminController.getAll);
 
 // update by admin
-router.patch("/update/:id", auth , checkRole("admin") ,validate(updateSchema),userController.update);
+router.patch("/update/:id", auth , authLimiter , checkRole("admin") ,validate(updateSchema),userController.update);
 
 
 // delete by admin

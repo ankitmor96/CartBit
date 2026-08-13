@@ -1,12 +1,14 @@
 import Food from "../model/Food.model.js";
-import HttpError from "../middleware/HttpError.js"
+import HttpError from "../middleware/HttpError.js";
+import cloudinary from "../config/cloudinary.js";
+import sendMail from "../utils/SendMail.js";
 
 
 const addFood = async (req, res, next) => {
     try {
 
 
-        const { name, price, description, restaurantName, providerName, category, FoodType, preparingTime, isAvailable, isVerified } = req.body;
+        const { name, price, description, restaurantName, providerName, category, FoodType, preparingTime } = req.body;
 
         if (!req.files || req.files.length === 0) {
             return next(new HttpError("Food image is required", 400));
@@ -27,6 +29,13 @@ const addFood = async (req, res, next) => {
         if (!newFood) {
             return next(new HttpError("new food data not found", 404));
         }
+
+        await sendMail({
+            to: req.user.email,
+            name:req.user.name,
+            email:req.user.email,
+            action:""
+        });
 
         res.status(201).json({
             success: true,
@@ -100,19 +109,19 @@ const getAllFood = async (req, res, next) => {
 
 
         if (!foods || foods.length === 0) {
-            res.status(404).json({
+            return res.status(404).json({
                 success: true,
                 message: "food data not found"
             });
         }
 
         res.status(200).json({
-            success:true,
-            message:"All food data fetched",
+            success: true,
+            message: "All food data fetched",
             foods,
-            totalFood : totalFood,
-            totalPage : Math.ceil(totalFood/limit),
-            currentPage : page
+            totalFood: totalFood,
+            totalPage: Math.ceil(totalFood / limit),
+            currentPage: page
         });
 
     } catch (error) {
@@ -120,4 +129,71 @@ const getAllFood = async (req, res, next) => {
     }
 };
 
-export default { addFood, getAllFood };
+const updateFood = async (req, res, next) => {
+    try {
+
+        const id = req.params.id;
+
+        const food = await User.findById(id);
+
+        if (!food) {
+            return next(new HttpError("food not found", 404));
+        }
+
+        const updates = Object.keys(req.body);
+
+        let allowedFields = [
+            "name",
+            "price",
+            "description",
+            "category",
+            "FoodType",
+            "preparingTime",
+            "isAvailable"
+        ];
+
+        if (req.user.role === "admin") {
+            allowedFields = [...allowedFields, "isVerified"];
+        }
+
+        const isValidUpdates = updates.every((field) =>
+            allowedFields.includes(field));
+
+        if (!isValidUpdates) {
+            return next(new HttpError("updates not found", 400));
+        }
+
+        updates.forEach((update) => {
+            food[update] = req.body[update];
+        });
+
+        if (req.files && req.files.length !== 0) {
+            if (food.cloudinary_id && food.cloudinary_id.length !== 0) {
+                for (const cloudinaryId of food.cloudinary_id) {
+                    await cloudinary.uploader.destroy(cloudinaryId, {
+                        resource_type: "image"
+                    });
+
+                }
+            }
+
+            food.FoodImage = req.files.map((file) => file.path);
+
+            food.cloudinary_id = req.files.map((file) => file.filename);
+
+        }
+
+        await food.save();
+
+        res.status(200).json({
+            success: true,
+            message: "user update successFully",
+            food // display auth login user
+        });
+
+    } catch (error) {
+        return next(new HttpError(error.message, 500));
+    }
+};
+
+export default { addFood, getAllFood, updateFood };

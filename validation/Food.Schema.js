@@ -47,6 +47,24 @@ const FoodSchema = Joi.object({
         "any.required": "preparingTime is required"
     }),
 
+    FoodType: Joi.string().valid("veg", "non-veg").required().messages({
+        "string.base": "FoodType must be in string",
+        "any.only": "FoodType must be either veg or non-veg",
+        "any.required": "FoodType is required"
+    }),
+
+    isAvailable: Joi.boolean().default(true).messages({
+        "boolean.base": "isAvailable must be true or false"
+    }),
+
+    isVerified: Joi.boolean().default(true).messages({
+        "boolean.base": "isVerified must be true or false"
+    }),
+
 });
+
+export const foodUpdateSchema = FoodSchema
+    .fork(["name", "price", "description", "restaurantName", "providerName", "category", "FoodType", "preparingTime","isAvailable","isVerified"], (field) => field.optional())
+    .or("name", "price", "description", "restaurantName", "providerName", "category", "FoodType", "preparingTime","isAvailable","isVerified");
 
 export default FoodSchema;
