@@ -114,7 +114,6 @@ const getAllProvider = async (req, res, next) => {
         const AllProviders = await Provider
             .find(filter)
             .populate("ownerName", "name email")
-            .populate("restaurants")
             .sort(sortOption)
             .skip((page - 1) * limit)
             .limit(limit)
@@ -149,96 +148,31 @@ const updateProvider = async (req, res, next) => {
         const provider = await Provider.findById(id);
 
         if (!provider) {
-            return next(new HttpError("provider data not found", 404));
+            return next(new HttpError("food not found", 404));
         }
 
-        const owner = await User.findById(provider.ownerName);
+        const updates = Object.keys(req.body);
 
-        if (!owner) {
-            return next(new HttpError("ownername not found", 404));
+        let allowedFields = [
+          "ownerName",
+          "restaurants",
+          "bankAccountNumber"
+        ];
+
+        if (req.user.role === "admin") {
+            allowedFields = [...allowedFields, "isVerified"];
         }
 
-        if (owner.role !== "admin") {
-            return next(new HttpError("owner role not matched", 404));
+        const isValidUpdates = updates.every((field) =>
+            allowedFields.includes(field));
+
+        if (!isValidUpdates) {
+            return next(new HttpError("updates not found", 400));
         }
 
-        if (req.body.ownerName) {
-
-            const newOwner = await User.findById(req.body.ownerName);
-
-            if (!newOwner) {
-                return next(new HttpError("new owner data not fount ", 404));
-            }
-
-            if (newOwner.role !== "admin") {
-                return next(new HttpError("new owner role not matched", 404));
-            }
-        }
-
-        if (req.query.restaurantId) {
-
-            const restaurant = await restaurantModel.findById(req.query.restaurantId);
-
-            if (!restaurant) {
-                return next(new HttpError("restaurant data not found", 404));
-            }
-
-            const isRestaurantOwned = provider.restaurants.some( // data basr ma provider pase ketla restaurant temathi aek che te mate 
-                (restaurantId) => restaurantId.toString() === req.query.restaurantId.toString());
-
-            if (!isRestaurantOwned) {
-                return next(new HttpError("restaurant id not fetched", 404));
-            }
-
-            if (req.body.restaurantName !== undefined) {
-                restaurant.restaurantName = req.body.restaurantName;
-            }
-
-            if (req.body.description !== undefined) {
-                restaurant.description = req.body.description;
-            }
-
-            if (req.body.address !== undefined) {
-                restaurant.address = req.body.address;
-            }
-
-            if (req.body.state !== undefined) {
-                restaurant.state = req.body.state;
-            }
-
-            if (req.body.city !== undefined) {
-                restaurant.city = req.body.city;
-            }
-
-            if (req.body.phone !== undefined) {
-                restaurant.phone = req.body.phone;
-            }
-
-            if (req.body.openingTime !== undefined) {
-                restaurant.openingTime = req.body.openingTime;
-            }
-
-            if (req.body.closingTime !== undefined) {
-                restaurant.closingTime = req.body.closingTime;
-            }
-
-            if (req.body.isOpen !== undefined) {
-                restaurant.isOpen = req.body.isOpen;
-            }
-
-            await restaurant.save();
-        }
-
-        const updateData = {};
-
-        if (req.body.ownerName) {
-            updateData.ownerName = req.body.ownerName;
-        }
-
-        if (req.body.bankAccountNumber) {
-            updateData.bankAccountNumber = req.body.bankAccountNumber;
-        }
-
+        updates.forEach((update) => {
+            provider[update] = req.body[update];
+        });
 
         if (req.files && req.files.length !== 0) {
             if (provider.cloudinary_id && provider.cloudinary_id.length !== 0) {
@@ -246,36 +180,28 @@ const updateProvider = async (req, res, next) => {
                     await cloudinary.uploader.destroy(cloudinaryId, {
                         resource_type: "raw"
                     });
+
                 }
             }
 
-            updateData.documents = req.files.map((field) => field.path);
-            updateData.cloudinary_id = req.files.map((field) => field.filename);
+            provider.documents = req.files.map((file) => file.path);
+
+            provider.cloudinary_id = req.files.map((file) => file.filename);
+
         }
 
-
-        const updateProvider = await Provider.findByIdAndUpdate(id,
-            {
-                $set: updateData
-            },
-            {
-                new: true,
-                runValidators: true
-            }
-        )
-        .populate("ownerName", "name email role")
-        .populate("restaurants");
+        await provider.save();
 
         res.status(200).json({
             success: true,
-            message: "Provider updated successfully",
-            data: updateProvider
+            message: "provider update successFully",
+            provider // display auth provider user
         });
 
     } catch (error) {
         return next(new HttpError(error.message, 500));
     }
-};
+}
 
 const DeleteProvider = async (req, res, next) => {
     try {

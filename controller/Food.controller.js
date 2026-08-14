@@ -3,6 +3,7 @@ import HttpError from "../middleware/HttpError.js";
 import cloudinary from "../config/cloudinary.js";
 import sendMail from "../utils/SendMail.js";
 import User from "../model/user.model.js";
+import Category from "../model/category.model.js";
 
 
 const addFood = async (req, res, next) => {
@@ -135,7 +136,7 @@ const updateFood = async (req, res, next) => {
 
         const id = req.params.id;
 
-        const food = await User.findById(id);
+        const food = await Food.findById(id);
 
         if (!food) {
             return next(new HttpError("food not found", 404));
@@ -172,7 +173,7 @@ const updateFood = async (req, res, next) => {
             if (food.cloudinary_id && food.cloudinary_id.length !== 0) {
                 for (const cloudinaryId of food.cloudinary_id) {
                     await cloudinary.uploader.destroy(cloudinaryId, {
-                        resource_type: "image"
+                        resource_type: "raw"
                     });
 
                 }
@@ -188,7 +189,7 @@ const updateFood = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: "user update successFully",
+            message: "food update successFully",
             food // display auth login user
         });
 
@@ -208,7 +209,7 @@ const DeleteFood = async (req, res, next) => {
             return next(new HttpError("food data not found", 404));
         }
 
-        const owner = await User.findById(food.ownerName); // provider as owner define by id
+        const owner = await User.findById(food.ownerName); // food as owner define by id
 
         if (!owner || owner.role !== "admin") {
             return next(new HttpError("only provider owner with user admin can delete data", 404));

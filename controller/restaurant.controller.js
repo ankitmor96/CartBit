@@ -19,8 +19,8 @@ const add = async (req, res, next) => {
             openingTime,
             closingTime,
             isOpen,
-            restaurantImage: req.file?.path || null,
-            cloudinary_id: req.file?.filename || null,
+            restaurantImage: req.file.path ,
+            cloudinary_id: req.file.filename ,
             owner: req.user._id
         });
 

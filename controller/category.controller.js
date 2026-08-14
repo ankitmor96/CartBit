@@ -1,5 +1,6 @@
 import HttpError from "../middleware/HttpError.js";
 import Category from "../model/category.model.js";
+import cloudinary from "../config/cloudinary.js";
 
 const addCategory = async (req, res, next) => {
     try {
@@ -117,9 +118,8 @@ const updateCategory = async (req, res, next) => {
 
         const allowedFields = ["name", "description"];
 
-        const isValidUpdates = updates.every(
-            (field) => allowedFields.includes(field)
-        );
+        const isValidUpdates = updates.every((field) => 
+            allowedFields.includes(field));
 
         if (!isValidUpdates) {
             return next(new HttpError("Invalid update fields", 400));
@@ -134,7 +134,7 @@ const updateCategory = async (req, res, next) => {
                 for (const cloudinaryId of category.cloudinary_id) {
                     await cloudinary.uploader.destroy(cloudinaryId,
                         {
-                            resource_type: "image"
+                            resource_type: "raw"
                         }
                     );
                 }
@@ -156,9 +156,7 @@ const updateCategory = async (req, res, next) => {
 
     } catch (error) {
 
-        return next(
-            new HttpError(error.message, 500)
-        );
+        return next(new HttpError(error.message, 500));
     }
 };
 
@@ -173,7 +171,7 @@ const DeleteCategory = async (req, res, next) => {
             return next(new HttpError("category data not found", 404));
         }
 
-        const owner = await User.findById(food.ownerName); // provider as owner define by id
+        const owner = await User.findById(category.ownerName); // category as owner define by id
 
         if (!owner || owner.role !== "admin") {
             return next(new HttpError("only provider owner with user admin can delete data", 404));
@@ -207,4 +205,4 @@ const DeleteCategory = async (req, res, next) => {
     }
 };
 
-export default { addCategory, getAllCategory, updateCategory , DeleteCategory};
+export default { addCategory, getAllCategory, updateCategory, DeleteCategory };
