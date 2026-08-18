@@ -13,6 +13,7 @@ import CategoryRoutes from "./routes/category.Routes.js";
 import rateLimiter from "./middleware/RateLimiter.js";
 import helmet from "helmet";
 import cors from "cors";
+import orderRoutes from "./routes/order.Routes.js";
 
 
 
@@ -46,6 +47,9 @@ app.use("/Food", FoodRoutes);
 
 //category routes
 app.use("/Categories", CategoryRoutes);
+
+//order routes
+app.use("/Order", orderRoutes);
 
 
 // routes
