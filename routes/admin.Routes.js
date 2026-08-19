@@ -11,7 +11,10 @@ import { authLimiter } from "../middleware/RateLimiter.js";
 const router = express.Router();
 
 // getAll user fetched by admin
-router.get("/AllUser" , auth , authLimiter , checkRole("admin") , adminController.getAll);
+router.get("/AllUser" , auth , checkRole("admin") , adminController.getAll);
+
+// dashbord routes
+router.get("/dashBordStatics" , auth , checkRole("admin") , adminController.dashBordStatics);
 
 // update by admin
 router.patch("/update/:id", auth , authLimiter , checkRole("admin") ,validate(updateSchema),userController.update);
