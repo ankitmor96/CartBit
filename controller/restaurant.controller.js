@@ -2,6 +2,7 @@ import cloudinary from "../config/cloudinary.js";
 import HttpError from "../middleware/HttpError.js";
 import restaurantModel from "../model/restaurant.model.js";
 import sendMail from "../utils/SendMail.js";
+import auditLogger from "../middleware/auditLogger.js";
 
 const add = async (req, res, next) => {
     try {
@@ -19,9 +20,18 @@ const add = async (req, res, next) => {
             openingTime,
             closingTime,
             isOpen,
-            restaurantImage: req.file.path ,
-            cloudinary_id: req.file.filename ,
+            restaurantImage: req.file.path,
+            cloudinary_id: req.file.filename,
             owner: req.user._id
+        });
+
+        await auditLogger({
+            action: "RESTAURANT_ADD",
+            performedBy: req.user._id,
+            module: "Restaurant",
+            targetId: newRestaurant._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
         });
 
         await sendMail({
@@ -183,6 +193,15 @@ const updateRestaurant = async (req, res, next) => {
 
         await Restaurant.save();
 
+        await auditLogger({
+            action: "RESTAURANT_UPDATED",
+            performedBy: req.user._id,
+            module: "Restaurant",
+            targetId: Restaurant._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
+
         res.status(200).json({
             success: true,
             message: "Restaurant update successFully",
@@ -214,6 +233,15 @@ const deleteRestaurant = async (req, res, next) => {
                 cloudinary.uploader.destroy(Restaurant.cloudinary_id);
             }
         }
+
+        await auditLogger({
+            action: "RESTAURANT_DELETED",
+            performedBy: req.user._id,
+            module: "Restaurant",
+            targetId: Restaurant._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
 
         await Restaurant.deleteOne();
 

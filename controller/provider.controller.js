@@ -4,6 +4,7 @@ import User from "../model/user.model.js";
 import sendMail from "../utils/SendMail.js";
 import cloudinary from "../config/cloudinary.js";
 import restaurantModel from "../model/restaurant.model.js";
+import auditLogger from "../middleware/auditLogger.js";
 
 
 const registerAsProvider = async (req, res, next) => {
@@ -38,6 +39,15 @@ const registerAsProvider = async (req, res, next) => {
         await newProvider.save();
 
         await user.save();
+
+        await auditLogger({
+            action: "PROVIDER_ADD",
+            performedBy: req.user._id,
+            module: "Provider",
+            targetId: newProvider._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
 
         await sendMail({
             to: req.user.email,
@@ -154,9 +164,9 @@ const updateProvider = async (req, res, next) => {
         const updates = Object.keys(req.body);
 
         let allowedFields = [
-          "ownerName",
-          "restaurants",
-          "bankAccountNumber"
+            "ownerName",
+            "restaurants",
+            "bankAccountNumber"
         ];
 
         if (req.user.role === "admin") {
@@ -191,6 +201,15 @@ const updateProvider = async (req, res, next) => {
         }
 
         await provider.save();
+
+        await auditLogger({
+            action: "PROVIDER_UPDATED",
+            performedBy: req.user._id,
+            module: "Provider",
+            targetId: provider._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
 
         res.status(200).json({
             success: true,
@@ -227,6 +246,15 @@ const DeleteProvider = async (req, res, next) => {
                 });
             }
         }
+
+        await auditLogger({
+            action: "PROVIDER_DELETED",
+            performedBy: req.user._id,
+            module: "Provider",
+            targetId: provider._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
 
         await provider.deleteOne();
 

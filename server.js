@@ -14,6 +14,7 @@ import rateLimiter from "./middleware/RateLimiter.js";
 import helmet from "helmet";
 import cors from "cors";
 import orderRoutes from "./routes/order.Routes.js";
+import AuditLogRoutes from "./routes/audit.Routes.js";
 
 
 
@@ -50,6 +51,9 @@ app.use("/Categories", CategoryRoutes);
 
 //order routes
 app.use("/Order", orderRoutes);
+
+// audit log routes
+app.use("/Auditlog", AuditLogRoutes);
 
 
 // routes

@@ -4,6 +4,7 @@ import cloudinary from "../config/cloudinary.js";
 import sendMail from "../utils/SendMail.js";
 import User from "../model/user.model.js";
 import Category from "../model/category.model.js";
+import auditLogger from "../middleware/auditLogger.js";
 
 
 const addFood = async (req, res, next) => {
@@ -26,6 +27,15 @@ const addFood = async (req, res, next) => {
             preparingTime,
             FoodImage: req.files.map((field) => field.path),
             cloudinary_id: req.files.map((field) => field.filename)
+        });
+
+        await auditLogger({
+            action: "FOOD_ADD",
+            performedBy: req.user._id,
+            module: "Food",
+            targetId: newFood._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
         });
 
         if (!newFood) {
@@ -187,6 +197,15 @@ const updateFood = async (req, res, next) => {
 
         await food.save();
 
+        await auditLogger({
+            action: "FOOD_UPDATED",
+            performedBy: req.user._id,
+            module: "Food",
+            targetId: food._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
+
         res.status(200).json({
             success: true,
             message: "food update successFully",
@@ -223,15 +242,24 @@ const DeleteFood = async (req, res, next) => {
             }
         }
 
+        await auditLogger({
+            action: "FOOD_DELETED",
+            performedBy: req.user._id,
+            module: "Food",
+            targetId: food._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
+
         await food.deleteOne();
 
-        // await sendMail({
-        //     to: req.user.email,
-        //     name: req.user.name,
-        //     email: req.user.email,
-        //     // itemName: ,
-        //     action: "PROVIDER_DELETED"
-        // });
+        await sendMail({
+            to: req.food.email,
+            name: req.food.name,
+            email: req.food.email,
+            // itemName: ,
+            action: "FOOD_DELETED"
+        });
 
         res.status(200).json({
             success: true,
@@ -243,4 +271,4 @@ const DeleteFood = async (req, res, next) => {
     }
 };
 
-export default { addFood, getAllFood, updateFood , DeleteFood};
+export default { addFood, getAllFood, updateFood, DeleteFood };

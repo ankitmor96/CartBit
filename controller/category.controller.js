@@ -1,6 +1,8 @@
 import HttpError from "../middleware/HttpError.js";
 import Category from "../model/category.model.js";
 import cloudinary from "../config/cloudinary.js";
+import auditLogger from "../middleware/auditLogger.js";
+import User from "../model/user.model.js";
 
 const addCategory = async (req, res, next) => {
     try {
@@ -16,6 +18,15 @@ const addCategory = async (req, res, next) => {
             description,
             CategoryImage: req.files.map((field) => field.path),
             cloudinary_id: req.files.map((field) => field.filename)
+        });
+
+        await auditLogger({
+            action: "CATEGORY_ADD",
+            performedBy: req.user._id,
+            module: "Category",
+            targetId: newCategory._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
         });
 
         if (!newCategory) {
@@ -118,7 +129,7 @@ const updateCategory = async (req, res, next) => {
 
         const allowedFields = ["name", "description"];
 
-        const isValidUpdates = updates.every((field) => 
+        const isValidUpdates = updates.every((field) =>
             allowedFields.includes(field));
 
         if (!isValidUpdates) {
@@ -147,6 +158,15 @@ const updateCategory = async (req, res, next) => {
         }
 
         await category.save();
+
+        await auditLogger({
+            action: "CATEGORY_UPDATED",
+            performedBy: req.user._id,
+            module: "Category",
+            targetId: category._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
 
         res.status(200).json({
             success: true,
@@ -185,15 +205,23 @@ const DeleteCategory = async (req, res, next) => {
             }
         }
 
+        await auditLogger({
+            action: "CATEGORY_DELETED",
+            performedBy: req.user._id,
+            module: "Category",
+            targetId: category._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
+
         await category.deleteOne();
 
-        // await sendMail({
-        //     to: req.user.email,
-        //     name: req.user.name,
-        //     email: req.user.email,
-        //     // itemName: ,
-        //     action: "PROVIDER_DELETED"
-        // });
+        await sendMail({
+            to: req.user.email,
+            name: req.user.name,
+            email: req.user.email,
+            action: "CATEGORY_DELETED"
+        });
 
         res.status(200).json({
             success: true,

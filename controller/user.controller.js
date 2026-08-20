@@ -1,4 +1,5 @@
 import cloudinary from "../config/cloudinary.js";
+import auditLogger from "../middleware/auditLogger.js";
 import HttpError from "../middleware/HttpError.js";
 import User from "../model/user.model.js";
 import sendMail from "../utils/SendMail.js";
@@ -27,6 +28,15 @@ const add = async (req, res, next) => {
         }
 
         await newUser.save(); // save new user
+
+        await auditLogger({
+            action: "USER_ADD",
+            performedBy: newUser._id,
+            module: "User",
+            targetId: newUser._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
 
         await sendMail({
             to: newUser.email,
@@ -59,6 +69,15 @@ const login = async (req, res, next) => {
         }
 
         const token = await userLogin.generateAuthToken();
+
+        await auditLogger({
+            action: "USER_LOGIN",
+            performedBy: userLogin._id,
+            module: "User",
+            targetId: userLogin._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
 
         res.status(200).json({
             success: true,
@@ -132,6 +151,15 @@ const update = async (req, res, next) => {
         }
 
         await user.save();
+
+        await auditLogger({
+            action: "USER_UPDATED",
+            performedBy: req.user._id,
+            module: "User",
+            targetId: user._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
 
         res.status(200).json({
             success: true,
@@ -259,12 +287,25 @@ const deleteUser = async (req, res, next) => {
 
         const user = await User.findById(TargetUser);
 
+        if (!user) {
+            return next(new HttpError("user data not defined", 404));
+        }
+
+        await auditLogger({
+            action: "USER_DELETED",
+            performedBy: req.user._id,
+            module: "User",
+            targetId: user._id,
+            ip: req.ip,
+            userAgent: req.get("User-Agent")
+        });
+
         await user.deleteOne();
 
         await sendMail({
-            to: newUser.email,
-            name: newUser.name,
-            email: newUser.email,
+            to: user.email,
+            name: user.name,
+            email: user.email,
             action: "USER_DELETED"
         });
 
