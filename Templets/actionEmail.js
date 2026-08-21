@@ -143,6 +143,130 @@ const actionEmail = ({
         label = "Provider Email";
         value = email;
     }
+    // ORDER ADD
+    else if (action === "ORDER_ADDED") {
+
+        title = "Order Placed Successfully 🛒";
+
+        heading = "Your Order Has Been Placed Successfully";
+
+        message = `
+        Hello ${name},
+
+        Your order has been successfully placed on CartBit.
+
+        Thank you for ordering with us. Your order will be processed shortly.
+    `;
+
+        icon = "🛒";
+        label = "Order Item";
+        value = itemName;
+    }
+
+
+    // ORDER DELETE
+    else if (action === "ORDER_DELETED") {
+
+        title = "Order Cancelled / Deleted 🗑️";
+
+        heading = "Your Order Has Been Deleted";
+
+        message = `
+        Hello ${name},
+
+        Your order has been successfully deleted from CartBit.
+
+        If you did not perform this action, please contact our support team.
+    `;
+
+        icon = "🗑️";
+        label = "Order Item";
+        value = itemName;
+    }
+
+
+    // FOOD ADD
+    else if (action === "FOOD_ADDED") {
+
+        title = "Food Added Successfully 🍕";
+
+        heading = "Food Item Added Successfully";
+
+        message = `
+        Hello ${name},
+
+        Your food item has been successfully added to CartBit.
+
+        You can now manage this food item from your account.
+    `;
+
+        icon = "🍕";
+        label = "Food Name";
+        value = itemName;
+    }
+
+
+    // FOOD DELETE
+    else if (action === "FOOD_DELETED") {
+
+        title = "Food Item Deleted 🗑️";
+
+        heading = "Food Item Deleted Successfully";
+
+        message = `
+        Hello ${name},
+
+        Your food item has been successfully deleted from CartBit.
+
+        If this action was not expected, please contact the CartBit administration team.
+    `;
+
+        icon = "🗑️";
+        label = "Food Name";
+        value = itemName;
+    }
+
+
+    // CATEGORY ADD
+    else if (action === "CATEGORY_ADDED") {
+
+        title = "Category Added Successfully 📂";
+
+        heading = "Category Added Successfully";
+
+        message = `
+        Hello ${name},
+
+        Your category has been successfully added to CartBit.
+
+        You can now use this category for managing your food items.
+    `;
+
+        icon = "📂";
+        label = "Category Name";
+        value = itemName;
+    }
+
+
+    // CATEGORY DELETE
+    else if (action === "CATEGORY_DELETED") {
+
+        title = "Category Deleted 🗑️";
+
+        heading = "Category Deleted Successfully";
+
+        message = `
+        Hello ${name},
+
+        Your category has been successfully deleted from CartBit.
+
+        If this action was not expected, please contact the CartBit administration team.
+    `;
+
+        icon = "🗑️";
+        label = "Category Name";
+        value = itemName;
+    }
 
 
     // INVALID ACTION

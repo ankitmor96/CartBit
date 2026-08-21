@@ -3,6 +3,7 @@ import Category from "../model/category.model.js";
 import cloudinary from "../config/cloudinary.js";
 import auditLogger from "../middleware/auditLogger.js";
 import User from "../model/user.model.js";
+import sendMail from "../utils/SendMail.js";
 
 const addCategory = async (req, res, next) => {
     try {
@@ -32,6 +33,14 @@ const addCategory = async (req, res, next) => {
         if (!newCategory) {
             return next(new HttpError("new category data not found", 404));
         }
+
+        await sendMail({
+            to: req.user.email,
+            name: req.user.name,
+            email: req.user.email,
+            itemName: newCategory,
+            action: "CATEGORY_ADDED"
+        });
 
         res.status(201).json({
             success: true,
@@ -191,9 +200,7 @@ const DeleteCategory = async (req, res, next) => {
             return next(new HttpError("category data not found", 404));
         }
 
-        const owner = await User.findById(category.ownerName); // category as owner define by id
-
-        if (!owner || owner.role !== "admin") {
+        if (req.user.role !== "admin") {
             return next(new HttpError("only provider owner with user admin can delete data", 404));
         }
 
@@ -214,14 +221,15 @@ const DeleteCategory = async (req, res, next) => {
             userAgent: req.get("User-Agent")
         });
 
-        await category.deleteOne();
-
         await sendMail({
             to: req.user.email,
             name: req.user.name,
             email: req.user.email,
+            itemName: category.name,
             action: "CATEGORY_DELETED"
         });
+
+        await category.deleteOne();
 
         res.status(200).json({
             success: true,

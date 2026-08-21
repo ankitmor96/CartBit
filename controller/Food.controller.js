@@ -5,6 +5,7 @@ import sendMail from "../utils/SendMail.js";
 import User from "../model/user.model.js";
 import Category from "../model/category.model.js";
 import auditLogger from "../middleware/auditLogger.js";
+import Provider from "../model/provider.model.js";
 
 
 const addFood = async (req, res, next) => {
@@ -29,6 +30,25 @@ const addFood = async (req, res, next) => {
             cloudinary_id: req.files.map((field) => field.filename)
         });
 
+        if (!newFood) {
+            return next(new HttpError("new food data not found", 404));
+        }
+
+        const foodPopulate = await newFood.populate([
+            {
+                path: "restaurantName",
+                select: "restaurantName"
+            },
+            {
+                path: "providerName",
+                select: "name email"
+            },
+            {
+                path: "category",
+                select: "name"
+            }
+        ]);
+
         await auditLogger({
             action: "FOOD_ADD",
             performedBy: req.user._id,
@@ -38,15 +58,12 @@ const addFood = async (req, res, next) => {
             userAgent: req.get("User-Agent")
         });
 
-        if (!newFood) {
-            return next(new HttpError("new food data not found", 404));
-        }
-
         await sendMail({
             to: req.user.email,
             name: req.user.name,
             email: req.user.email,
-            action: ""
+            itemName: newFood,
+            action: "FOOD_ADDED"
         });
 
         res.status(201).json({
@@ -228,9 +245,19 @@ const DeleteFood = async (req, res, next) => {
             return next(new HttpError("food data not found", 404));
         }
 
-        const owner = await User.findById(food.ownerName); // food as owner define by id
+        const provider = await Provider.findById(food.providerName);
 
-        if (!owner || owner.role !== "admin") {
+        if (!provider) {
+            return next(new HttpError("provider data not found", 404));
+        }
+
+        const owner = await User.findById(provider.ownerName);
+
+        if (!owner) {
+            return next(new HttpError("provider owner not found", 404));
+        }
+
+        if (owner.role !== "admin") {
             return next(new HttpError("only provider owner with user admin can delete data", 404));
         }
 
@@ -251,15 +278,15 @@ const DeleteFood = async (req, res, next) => {
             userAgent: req.get("User-Agent")
         });
 
-        await food.deleteOne();
-
         await sendMail({
-            to: req.food.email,
-            name: req.food.name,
-            email: req.food.email,
-            // itemName: ,
+            to: req.user.email,
+            name: req.user.name,
+            email: req.user.email,
+            itemName: food.name,
             action: "FOOD_DELETED"
         });
+
+        await food.deleteOne();
 
         res.status(200).json({
             success: true,

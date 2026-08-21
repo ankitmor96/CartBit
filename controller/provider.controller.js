@@ -53,7 +53,7 @@ const registerAsProvider = async (req, res, next) => {
             to: req.user.email,
             name: req.user.name,
             email: req.user.email,
-            // itemName: ,
+            //itemName: user.,
             action: "PROVIDER_ADDED"
         });
 

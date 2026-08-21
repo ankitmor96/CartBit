@@ -250,7 +250,7 @@ const deleteRestaurant = async (req, res, next) => {
             to: req.user.email,
             name: req.user.name,
             email: req.user.email,
-            itemName: newRestaurant.restaurantName,
+            itemName: Restaurant.restaurantName,
             action: "RESTAURANT_DELETED"
         });
 

@@ -2,6 +2,7 @@ import Order from "../model/order.model.js";
 import HttpError from "../middleware/HttpError.js";
 import Food from "../model/Food.model.js";
 import auditLogger from "../middleware/auditLogger.js";
+import sendMail from "../utils/SendMail.js";
 
 const addOrder = async (req, res, next) => {
     try {
@@ -57,6 +58,7 @@ const addOrder = async (req, res, next) => {
             userAgent: req.get("User-Agent")
         });
 
+
         const orderPopulate = await newOrder.populate([
             { path: "customerName", select: "name email phone" },
 
@@ -64,6 +66,20 @@ const addOrder = async (req, res, next) => {
 
             { path: "restaurantName", select: "restaurantName phone" }
         ]);
+
+        const FoodNames = orderPopulate.items.map((item) =>
+            `${item.food.name} - qty: ${item.qty}`)
+            .join(", ");
+
+        console.log("FOOD NAMES:", FoodNames);
+
+        await sendMail({
+            to: req.user.email,
+            name: req.user.name,
+            email: req.user.email,
+            itemName: FoodNames,
+            action: "ORDER_ADDED"
+        });
 
         res.status(201).json({
             success: true,
@@ -259,7 +275,8 @@ const deleteOrder = async (req, res, next) => {
 
         const id = req.params.id;
 
-        const order = await Order.findById(id);
+        const order = await Order.findById(id)
+            .populate("restaurantName", "restaurantName phone");;
 
         if (!order) {
             return next(new HttpError("order data not found", 400));
@@ -276,6 +293,14 @@ const deleteOrder = async (req, res, next) => {
             targetId: order._id,
             ip: req.ip,
             userAgent: req.get("User-Agent")
+        });
+
+        await sendMail({
+            to: req.user.email,
+            name: req.user.name,
+            email: req.user.email,
+            itemName: order.restaurantName.restaurantName,
+            action: "ORDER_DELETED"
         });
 
         await order.deleteOne();
