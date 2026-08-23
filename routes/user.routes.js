@@ -13,10 +13,10 @@ const router = express.Router();
 
 
 // using post method create new user
-router.post("/add" , authLimiter ,validate(registerSchema),UserUploads.single("ProfilePic"), userController.add);
+router.post("/add"  ,validate(registerSchema),UserUploads.single("ProfilePic"), userController.add);
 
 //  register user login 
-router.post("/login",authLimiter, userController.login);
+router.post("/login", userController.login);
 
 // user auth login
 router.post("/authLogin" ,auth, userController.authLogin);

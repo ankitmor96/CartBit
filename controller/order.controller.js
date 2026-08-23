@@ -3,6 +3,8 @@ import HttpError from "../middleware/HttpError.js";
 import Food from "../model/Food.model.js";
 import auditLogger from "../middleware/auditLogger.js";
 import sendMail from "../utils/SendMail.js";
+// import sendWhatsAppMessage from "../utils/sendWhatsApp.js";
+import sendWhatsAppMessage from "../utils/sendWhatsApp.js"
 
 const addOrder = async (req, res, next) => {
     try {
@@ -80,6 +82,13 @@ const addOrder = async (req, res, next) => {
             itemName: FoodNames,
             action: "ORDER_ADDED"
         });
+
+        // await sendWhatsApp({
+        //     phone: newOrder.phone,
+        //     orderId: newOrder._id
+        // });
+        await sendWhatsAppMessage(newOrder.customerName.phone, "order has been created successfully!");
+
 
         res.status(201).json({
             success: true,
