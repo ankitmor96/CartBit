@@ -99,8 +99,6 @@ const authLogin = async (req, res, next) => {
             return next(new HttpError("auth user is not found", 404));
         }
 
-        const token = await user.generateAuthToken();
-
         res.status(200).json({
             success: true,
             message: "new user create successFully",

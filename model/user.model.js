@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import HttpError from "../middleware/HttpError.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
