@@ -15,6 +15,8 @@ import helmet from "helmet";
 import cors from "cors";
 import orderRoutes from "./routes/order.Routes.js";
 import AuditLogRoutes from "./routes/audit.Routes.js";
+import paymentRoutes from "./routes/payment.Routes.js";
+import path from "path";
 
 
 
@@ -22,6 +24,16 @@ import AuditLogRoutes from "./routes/audit.Routes.js";
 dotenv.config({ path: "./.env" });
 
 const app = express();
+
+// payment.html
+
+console.log("CURRENT FOLDER:", process.cwd());
+console.log(
+    "PUBLIC FOLDER:",
+    path.join(process.cwd(), "public")
+);
+
+app.use(express.static(path.join(process.cwd(), "public")));
 
 app.use(rateLimiter);
 
@@ -51,6 +63,9 @@ app.use("/Categories", CategoryRoutes);
 
 //order routes
 app.use("/Order", orderRoutes);
+
+//payment routes
+app.use("/payment", paymentRoutes);
 
 // audit log routes
 app.use("/Auditlog", AuditLogRoutes);
@@ -110,7 +125,7 @@ StartServer();
 
 //         console.log("Restaurant :", Restaurant);
 
-//         // const owner = await User.findById(Restaurant.owner);  // manually process read owner 
+//         // const owner = await User.findById(Restaurant.owner);  // manually process read owner
 
 //         // console,log("owner :", Restaurant.owner);
 
@@ -122,19 +137,19 @@ StartServer();
 
 // ChekRestaurant();
 
-async function virtualRestaurant() {
-    try {
+// async function virtualRestaurant() {
+//     try {
 
-        const owner = await User.findById("6a5e19eef2636419634b9688").populate("restaurants");
+//         const owner = await User.findById("6a5e19eef2636419634b9688").populate("restaurants");
 
-        // console.log("owner :", owner);
+//         // console.log("owner :", owner);
 
-        console.log(owner.restaurants);
+//         console.log(owner.restaurants);
 
 
-    } catch (error) {
-        console.log(error.message);
-    }
-};
+//     } catch (error) {
+//         console.log(error.message);
+//     }
+// };
 
-virtualRestaurant();
+// virtualRestaurant();
