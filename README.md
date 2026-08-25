@@ -11,9 +11,7 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 ### 👤 User Management
 
 * User Registration & Login
-
 * <img width="1917" height="905" alt="Screenshot 2026-08-25 151805" src="https://github.com/user-attachments/assets/84efc820-baff-4b7b-b94b-5dd88064a60b" />
-
 * User CRUD Operations
 * JWT Authentication
 * Role-Based Authorization
@@ -36,6 +34,7 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 ### 👨‍🍳 Provider Management
 
 * Provider CRUD Operations
+* * <img width="1917" height="907" alt="Screenshot 2026-08-25 152432" src="https://github.com/user-attachments/assets/12f88203-f724-4f0b-b7ce-f767c3eae9a9" />
 * Provider Verification
 * Restaurant Management
 * Document Upload
@@ -55,7 +54,7 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 ### 🍕 Food Management
 
 * Create Food
-* <img width="1917" height="907" alt="Screenshot 2026-08-25 152432" src="https://github.com/user-attachments/assets/12f88203-f724-4f0b-b7ce-f767c3eae9a9" />
+* <img width="1917" height="907" alt="Screenshot 2026-08-25 152432" src="https://github.com/user-attachments/assets/612cad89-7011-4f5f-a564-2f3de6d16015" />
 
 * Get Food
 * Update Food
