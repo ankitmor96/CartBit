@@ -11,12 +11,13 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 ### 👤 User Management
 
 * User Registration & Login
+
+* <img width="1917" height="905" alt="Screenshot 2026-08-25 151805" src="https://github.com/user-attachments/assets/84efc820-baff-4b7b-b94b-5dd88064a60b" />
+
 * User CRUD Operations
 * JWT Authentication
 * Role-Based Authorization
 * Password Hashing
-
-* <img width="1917" height="905" alt="Screenshot 2026-08-25 151805" src="https://github.com/user-attachments/assets/84efc820-baff-4b7b-b94b-5dd88064a60b" />
 
 * <img width="1917" height="867" alt="Screenshot 2026-08-25 151902" src="https://github.com/user-attachments/assets/59cf33cb-b422-4070-a1c1-fb5bc3d927e6" />
 
@@ -24,13 +25,12 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 ### 🏪 Restaurant Management
 
 * Create Restaurant
+*  <img width="1916" height="902" alt="Screenshot 2026-08-25 152242" src="https://github.com/user-attachments/assets/e73e5099-4721-4011-baef-f66ec74d018e" />
 * Get Restaurant Details
 * Update Restaurant
 * Delete Restaurant
 * Restaurant Open/Close Status
 * Restaurant & Provider Relationship
-
-* <img width="1916" height="902" alt="Screenshot 2026-08-25 152242" src="https://github.com/user-attachments/assets/e73e5099-4721-4011-baef-f66ec74d018e" />
 
 
 ### 👨‍🍳 Provider Management
@@ -55,6 +55,8 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 ### 🍕 Food Management
 
 * Create Food
+* <img width="1917" height="907" alt="Screenshot 2026-08-25 152432" src="https://github.com/user-attachments/assets/12f88203-f724-4f0b-b7ce-f767c3eae9a9" />
+
 * Get Food
 * Update Food
 * Delete Food
@@ -73,6 +75,7 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 ### 🛒 Order Management
 
 * Create Order
+* <img width="1916" height="901" alt="Screenshot 2026-08-25 153620" src="https://github.com/user-attachments/assets/8b5d01c2-aeaf-410a-99ac-d6a19153b1d5" />
 * Get Orders
 * Update Order
 * Delete Order
