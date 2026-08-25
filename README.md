@@ -18,6 +18,8 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 
 * <img width="1917" height="905" alt="Screenshot 2026-08-25 151805" src="https://github.com/user-attachments/assets/84efc820-baff-4b7b-b94b-5dd88064a60b" />
 
+* <img width="1917" height="867" alt="Screenshot 2026-08-25 151902" src="https://github.com/user-attachments/assets/59cf33cb-b422-4070-a1c1-fb5bc3d927e6" />
+
 
 ### 🏪 Restaurant Management
 
@@ -28,7 +30,7 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 * Restaurant Open/Close Status
 * Restaurant & Provider Relationship
 
-* <img width="1917" height="867" alt="Screenshot 2026-08-25 151902" src="https://github.com/user-attachments/assets/59cf33cb-b422-4070-a1c1-fb5bc3d927e6" />
+* <img width="1916" height="902" alt="Screenshot 2026-08-25 152242" src="https://github.com/user-attachments/assets/e73e5099-4721-4011-baef-f66ec74d018e" />
 
 
 ### 👨‍🍳 Provider Management
