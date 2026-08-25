@@ -54,8 +54,7 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 ### 🍕 Food Management
 
 * Create Food
-* <img width="1917" height="907" alt="Screenshot 2026-08-25 152432" src="https://github.com/user-attachments/assets/612cad89-7011-4f5f-a564-2f3de6d16015" />
-
+* <img width="1911" height="901" alt="Screenshot 2026-08-25 152923" src="https://github.com/user-attachments/assets/3e030309-7d5b-4d28-b62c-421cb857ba0d" />
 * Get Food
 * Update Food
 * Delete Food
@@ -86,11 +85,13 @@ CartBit is a **Food Delivery Backend System** designed to manage customers, rest
 ### 💳 Razorpay Payment
 
 * Razorpay Test Mode Integration
+* <img width="1917" height="897" alt="Screenshot 2026-08-25 153723" src="https://github.com/user-attachments/assets/53a4f944-0293-4f5a-82a0-2a358d2d3cf2" />
 * Create Razorpay Order
 * Razorpay Checkout
 * Payment Verification
 * Razorpay Signature Verification
 * Payment Status Management
+* <img width="1917" height="971" alt="Screenshot 2026-08-25 154639" src="https://github.com/user-attachments/assets/4f72381c-066d-4637-a60f-d61ac8917c5c" />
 * Failed Payment Handling
 
 ---
