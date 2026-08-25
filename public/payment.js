@@ -32,36 +32,22 @@ function payNow() {
 
         handler: async function (response) {
 
-            console.log(
-                "Razorpay Response:",
-                response
-            );
-
+            console.log("Razorpay Response:",response);
 
             const verifyData = {
 
-                razorpay_order_id:
-                    response.razorpay_order_id,
+                razorpay_order_id:response.razorpay_order_id,
+                
+                razorpay_payment_id:response.razorpay_payment_id,
 
-                razorpay_payment_id:
-                    response.razorpay_payment_id,
-
-                razorpay_signature:
-                    response.razorpay_signature
-
+                razorpay_signature:response.razorpay_signature
             };
 
-
-            console.log(
-                "VERIFY DATA:",
-                verifyData
-            );
-
+            console.log("VERIFY DATA:",verifyData);
 
             try {
 
-                const result = await fetch(
-                    "/payment/verifyRazorpayPayment",
+                const result = await fetch( "/payment/verifyRazorpayPayment",
                     {
                         method: "POST",
 
@@ -77,23 +63,16 @@ function payNow() {
                 const data = await result.json();
 
 
-                console.log(
-                    "VERIFY RESPONSE:",
-                    data
-                );
+                console.log("VERIFY RESPONSE:",data);
 
 
                 if (data.success) {
 
-                    alert(
-                        "Payment verified successfully!"
-                    );
+                    alert("Payment verified successfully!");
 
                 } else {
 
-                    alert(
-                        "Payment verification failed!"
-                    );
+                    alert("Payment verification failed!");
 
                 }
 
