@@ -10,7 +10,7 @@ import { authLimiter } from "../middleware/RateLimiter.js";
 
 const router = express.Router();
 
-router.post("/add" , auth , authLimiter , checkRole("admin","provider"), RestaurantUploads.single("restaurantImage"),validate(restaurantSchema), restaurantController.add);
+router.post("/add" , auth  , authLimiter , checkRole("admin","provider"), RestaurantUploads.single("restaurantImage"),validate(restaurantSchema), restaurantController.add);
 
 router.get("/getAll" , auth , checkRole("admin") , restaurantController.getAll);
 

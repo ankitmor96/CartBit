@@ -27,7 +27,7 @@ function payNow() {
 
         description: "CartBit Test Payment",
 
-        order_id: "order_TTX83u9YkLUYZM",
+        order_id: "order_TTxop0qH4wiks5",
 
 
         handler: async function (response) {

@@ -6,10 +6,11 @@ import checkRole from "../middleware/checkRole.js";
 import validate from "../middleware/validate.js";
 import OrderSchema from "../validation/order.Schema.js";
 import {orderUpdateSchema} from "../validation/order.Schema.js"
+import { authLimiter } from "../middleware/RateLimiter.js";
 
 const router = express.Router();
 
-router.post("/addOrder" , auth , checkRole("customer"), validate(OrderSchema), orderController.addOrder);
+router.post("/addOrder" , auth , authLimiter , checkRole("customer"), validate(OrderSchema), orderController.addOrder);
 
 router.get("/getAllOrder" , auth , checkRole("admin") , orderController.getAllOrder);
 
